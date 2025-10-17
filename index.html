@@ -33,7 +33,7 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
+      overflow-y: auto;
     }
 
     .center {
@@ -108,23 +108,27 @@
       flex: 1;
       display: flex;
       flex-direction: column;
-      overflow: hidden;
     }
 
     header {
       display: flex;
-      justify-content: space-between;
+      flex-direction: column;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
-      margin-bottom: 20px;
+      text-align: center;
       position: relative;
-      z-index: 10;
+      padding-top: 40px;
+      margin-bottom: 20px;
     }
 
-    h1 {
+    header h1 {
       font-size: 22px;
       margin: 0;
+    }
+
+    header .small {
+      color: var(--muted);
+      font-size: 14px;
+      margin-top: 4px;
     }
 
     .search {
@@ -138,51 +142,58 @@
     }
 
     .logout-btn {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.3);
-      color: #fff;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 13px;
-      cursor: pointer;
       position: absolute;
-      top: 0;
-      right: 0;
-      z-index: 100;
-      transition: 0.2s;
+      top: 8px;
+      right: 8px;
+      background: var(--accent);
+      border: none;
+      color: #fff;
+      font-size: 18px;
+      border-radius: 8px;
+      width: 40px;
+      height: 40px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s ease;
+      z-index: 10;
     }
 
     .logout-btn:hover {
-      background: rgba(255,255,255,0.1);
+      background: var(--accent-hover);
+    }
+
+    /* === KOTAK TABEL SCROLLABLE === */
+    .table-container {
+      background: var(--card);
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      overflow-y: auto;
+      max-height: 300px; /* tampil 5 baris */
+      margin-top: 10px;
+      position: relative; /* penting biar sticky di sini, bukan di body */
     }
 
     table {
       width: 100%;
       border-collapse: collapse;
-      background: var(--card);
-      border-radius: 12px;
-      overflow: hidden;
-      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
-      flex: 1;
-      display: block;
-      max-height: calc(100vh - 200px);
-      overflow-y: auto;
     }
 
     th, td {
       padding: 12px 14px;
       text-align: left;
-      border-bottom: 1px solid rgba(255,255,255,0.05);
+      border-bottom: 1px solid rgb(120, 127, 138);
       font-size: 14px;
     }
 
     th {
       color: var(--muted);
-      background: rgba(255,255,255,0.05);
+      background: var(--card); /* biar warna header solid, gak transparan */
       font-weight: 500;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 2;
     }
 
     tr:hover td {
@@ -199,7 +210,7 @@
       font-size: 13px;
     }
 
-    /* MODAL DETAIL GRUP */
+    /* === MODAL === */
     .modal {
       display: none;
       position: fixed;
@@ -242,7 +253,6 @@
       font-size: 28px;
       color: #fff;
       cursor: pointer;
-      z-index: 10;
       background: rgba(255,255,255,0.1);
       width: 32px;
       height: 32px;
@@ -257,35 +267,6 @@
       background: rgba(255,255,255,0.2);
     }
 
-    .modal-body p {
-      margin: 8px 0;
-      line-height: 1.5;
-      word-wrap: break-word;
-    }
-
-    .modal-body p strong {
-      color: var(--accent);
-    }
-
-    /* SCROLLBAR STYLE */
-    .modal-content::-webkit-scrollbar {
-      width: 8px;
-    }
-
-    .modal-content::-webkit-scrollbar-track {
-      background: rgba(255,255,255,0.05);
-      border-radius: 10px;
-    }
-
-    .modal-content::-webkit-scrollbar-thumb {
-      background: rgba(255,255,255,0.1);
-      border-radius: 10px;
-    }
-
-    .modal-content::-webkit-scrollbar-thumb:hover {
-      background: rgba(255,255,255,0.2);
-    }
-
     footer {
       text-align: center;
       color: var(--muted);
@@ -293,42 +274,23 @@
       margin-top: auto;
       padding: 16px 0;
       border-top: 1px solid rgba(255,255,255,0.05);
-      position: sticky;
-      bottom: 0;
       background: var(--bg);
-      z-index: 100;
     }
 
-    /* MOBILE RESPONSIVE */
     @media (max-width: 768px) {
-      .wrap {
-        padding: 12px;
-      }
-      table {
-        max-height: calc(100vh - 220px);
-      }
-      .modal-content {
-        max-width: 95%;
-        padding: 16px;
-      }
-      .logout-btn {
-        top: 8px;
-        right: 8px;
-        padding: 4px 8px;
-        font-size: 12px;
-      }
+      .wrap { padding: 12px; }
+      .modal-content { padding: 16px; }
     }
   </style>
 </head>
 <body>
   <main>
-
     <!-- LOGIN -->
     <div id="login-page" class="center">
       <div class="card">
         <h2>Login Panel Bot</h2>
-        <input type="text" id="username" placeholder="Username" autocomplete="username">
-        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+        <input type="text" id="username" placeholder="Username">
+        <input type="password" id="password" placeholder="Password">
         <button id="login-btn">Login</button>
         <div class="small" id="to-register">Belum punya akun? <u>Daftar</u></div>
       </div>
@@ -338,8 +300,8 @@
     <div id="register-page" class="center" style="display:none;">
       <div class="card">
         <h2>Buat Akun Baru</h2>
-        <input type="text" id="reg-username" placeholder="Username" autocomplete="username">
-        <input type="password" id="reg-password" placeholder="Password" autocomplete="new-password">
+        <input type="text" id="reg-username" placeholder="Username">
+        <input type="password" id="reg-password" placeholder="Password">
         <button id="register-btn">Daftar</button>
         <div class="small" id="to-login">Sudah punya akun? <u>Login</u></div>
       </div>
@@ -349,27 +311,27 @@
     <div id="admin-panel" style="display:none;flex:1;">
       <div class="wrap">
         <header>
-          <div>
-            <h1>Panel Admin Bot</h1>
-            <div class="small">Kelola data grup di Firestore</div>
-          </div>
+          <h1>Panel Admin Bot</h1>
+          <div class="small">Kelola data grup di Firestore</div>
           <input id="search" class="search" placeholder="Cari grup...">
-          <button id="logout" class="logout-btn">Logout</button>
+          <button id="logout" class="logout-btn" title="Keluar">🔙</button>
         </header>
         <div class="small" id="status">Status: <span id="stat-text">Belum terhubung</span></div>
-        <table>
-          <thead>
-            <tr>
-              <th>Nama Grup</th>
-              <th>ID Grup</th>
-              <th>Dimasukkan Oleh</th>
-              <th>Total Member</th>
-              <th>Terakhir Cek</th>
-              <th>Aksi</th>
-            </tr>
-          </thead>
-          <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Grup</th>
+                <th>ID Grup</th>
+                <th>Dimasukkan Oleh</th>
+                <th>Total Member</th>
+                <th>Terakhir Cek</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -377,25 +339,25 @@
     <div id="user-panel" style="display:none;flex:1;">
       <div class="wrap">
         <header>
-          <div>
-            <h1>Daftar Grup</h1>
-            <div class="small">Lihat detail grup yang tersedia</div>
-          </div>
+          <h1>Daftar Grup</h1>
+          <div class="small">Lihat detail grup yang tersedia</div>
           <input id="search-user" class="search" placeholder="Cari grup...">
-          <button id="logout2" class="logout-btn">Logout</button>
+          <button id="logout2" class="logout-btn" title="Keluar">🔙</button>
         </header>
-        <table>
-          <thead>
-            <tr>
-              <th>Nama Grup</th>
-              <th>ID Grup</th>
-              <th>Dimasukkan Oleh</th>
-              <th>Total Member</th>
-              <th>Terakhir Cek</th>
-            </tr>
-          </thead>
-          <tbody id="user-tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
-        </table>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Nama Grup</th>
+                <th>ID Grup</th>
+                <th>Dimasukkan Oleh</th>
+                <th>Total Member</th>
+                <th>Terakhir Cek</th>
+              </tr>
+            </thead>
+            <tbody id="user-tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
+          </table>
+        </div>
       </div>
     </div>
 
@@ -407,15 +369,15 @@
         <div class="modal-body">
           <p><strong>Nama Grup:</strong> <span id="modal-title">-</span></p>
           <p><strong>ID Grup:</strong> <span id="modal-id">-</span></p>
-          <p><strong>Dibuat Oleh:</strong> <span id="modal-added-by">-</span></p>
+          <p><strong>Di Tambah Oleh:</strong> <span id="modal-added-by">-</span></p>
           <p><strong>Total Member:</strong> <span id="modal-member-count">-</span></p>
           <p><strong>Terakhir Cek:</strong> <span id="modal-last-checked">-</span></p>
           <p><strong>Deskripsi:</strong> <span id="modal-description">-</span></p>
         </div>
       </div>
     </div>
-
   </main>
+
   <footer>© 2025 Panel Firestore — Semua hak dilindungi</footer>
 
   <script type="module">
