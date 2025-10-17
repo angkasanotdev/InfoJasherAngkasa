@@ -1,0 +1,187 @@
+<!doctype html>
+
+<html lang="id">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Panel Admin Bot — Firestore</title>
+  <style>
+    :root{--bg:#0b1220;--card:#0f1724;--muted:#94a3b8;--accent:#7c3aed}
+    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial}
+    body{margin:0;background:linear-gradient(180deg,#071025 0%,#0b1220 100%);color:#e6eef8}
+    .wrap{max-width:980px;margin:32px auto;padding:20px}
+    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+    h1{font-size:20px;margin:0}
+    .card{background:var(--card);border-radius:12px;padding:16px;box-shadow:0 6px 24px rgba(2,6,23,0.6)}
+    .controls{display:flex;gap:8px;align-items:center}
+    input.search{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:inherit}
+    button{background:var(--accent);border:0;padding:8px 12px;border-radius:8px;color:white;cursor:pointer}
+    table{width:100%;border-collapse:collapse;margin-top:12px}
+    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.03);font-size:14px}
+    th{color:var(--muted);font-weight:600}
+    .small{font-size:12px;color:var(--muted)}
+    .action-btn{padding:6px 10px;border-radius:8px;border:0;cursor:pointer}
+    .delete{background:#ef4444;color:#fff}
+    .refresh{background:transparent;border:1px solid rgba(255,255,255,0.06);color:inherit}
+    .empty{padding:28px;text-align:center;color:var(--muted)}
+    footer{margin-top:18px;font-size:13px;color:var(--muted)}
+    .badge{background:rgba(255,255,255,0.04);padding:6px 8px;border-radius:999px;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Panel Admin Bot — Firestore</h1>
+        <div class="small">Lihat & hapus grup yang tersimpan di koleksi <code>groups</code></div>
+      </div>
+      <div class="controls">
+        <input id="search" class="search" placeholder="Cari nama grup atau ID..." />
+        <button id="refresh" class="refresh">Refresh</button>
+        <button id="open-fb" class="badge">Open Firebase Console</button>
+      </div>
+    </header><section class="card">
+  <div id="status" class="small">Status: <span id="stat-text">Belum terhubung</span></div>
+
+  <div id="table-wrap">
+    <table id="groups-table">
+      <thead>
+        <tr>
+          <th>Group / Title</th>
+          <th>Added By</th>
+          <th>Member Count</th>
+          <th>Last Checked</th>
+          <th style="width:140px">Aksi</th>
+        </tr>
+      </thead>
+      <tbody id="tbody">
+        <tr><td colspan="5" class="empty">Memuat data...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="small" style="margin-top:10px">Catatan: Pastikan aturan keamanan Firestore sudah diatur agar hanya admin yang bisa mengakses panel ini.</div>
+</section>
+
+<footer>
+  Panel sederhana — ganti konfigurasi Firebase di bagian script.<br>
+  Untuk integrasi aman, gunakan Firebase Authentication (admin) atau host panel di environment terproteksi.
+</footer>
+
+  </div>  <!-- Firebase (modular v9+) -->  <script type="module">
+    // ====================
+    // 1) Ganti konfigurasi berikut dengan milikmu
+    // ====================
+    const firebaseConfig = {
+  apiKey: "AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
+  authDomain: "database-d81c7.firebaseapp.com",
+  projectId: "database-d81c7",
+  storageBucket: "database-d81c7.firebasestorage.app",
+  messagingSenderId: "934049685295",
+  appId: "1:934049685295:web:17ad6001402c57b9434bda",
+  measurementId: "G-JNF56G4RK9"
+};
+
+    // ====================
+    // 2) Library imports (CDN modular)
+    // ====================
+    import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js';
+    import {
+      getFirestore,
+      collection,
+      doc,
+      onSnapshot,
+      getDocs,
+      deleteDoc,
+      query,
+      orderBy
+    } from 'https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js';
+
+    // init
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // UI
+    const statText = document.getElementById('stat-text');
+    const tbody = document.getElementById('tbody');
+    const search = document.getElementById('search');
+    const refresh = document.getElementById('refresh');
+    const openFb = document.getElementById('open-fb');
+
+    let allGroups = [];
+
+    function formatDate(ts) {
+      if (!ts) return '-';
+      const d = new Date(ts);
+      return d.toLocaleString('id-ID');
+    }
+
+    function renderTable(rows) {
+      if (!rows.length) {
+        tbody.innerHTML = '<tr><td colspan="5" class="empty">Tidak ada grup.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = rows.map(r => `
+        <tr>
+          <td>
+            <div style="font-weight:600">${escapeHtml(r.title || ('Group ' + r.id))}</div>
+            <div class="small">ID: ${r.id}</div>
+          </td>
+          <td class="small">${r.addedBy || '-'}</td>
+          <td class="small">${typeof r.memberCount === 'number' ? r.memberCount : '-'}</td>
+          <td class="small">${r.lastChecked ? formatDate(r.lastChecked) : '-'}</td>
+          <td>
+            <button class="action-btn delete" data-id="${r.id}">Hapus</button>
+          </td>
+        </tr>
+      `).join('');
+
+      // attach listeners
+      document.querySelectorAll('.action-btn.delete').forEach(btn => {
+        btn.onclick = async () => {
+          const id = btn.getAttribute('data-id');
+          if (!confirm('Hapus data grup ID ' + id + ' dari Firestore?')) return;
+          try {
+            await deleteDoc(doc(db, 'groups', id));
+            alert('Terhapus. Perubahan akan terlihat otomatis.');
+          } catch (e) {
+            alert('Gagal menghapus: ' + e.message);
+          }
+        };
+      });
+    }
+
+    function escapeHtml(s){ return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":"&#39;"}[c])); }
+
+    // realtime listener: koleksi 'groups'
+    async function startRealtime() {
+      statText.textContent = 'Terhubung — menunggu data...';
+      const q = query(collection(db, 'groups'), orderBy('lastChecked','desc'));
+      onSnapshot(q, snap => {
+        allGroups = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilter();
+        statText.textContent = 'Tersinkron — ' + allGroups.length + ' grup';
+      }, err => {
+        statText.textContent = 'Error: ' + err.message;
+      });
+    }
+
+    function applyFilter(){
+      const term = (search.value || '').toLowerCase().trim();
+      const filtered = allGroups.filter(g => {
+        return (g.title || '').toLowerCase().includes(term) || g.id.toLowerCase().includes(term);
+      });
+      renderTable(filtered);
+    }
+
+    // events
+    search.addEventListener('input', () => applyFilter());
+    refresh.addEventListener('click', () => applyFilter());
+    openFb.addEventListener('click', () => window.open('https://console.firebase.google.com/','_blank'));
+
+    // start
+    startRealtime();
+
+  </script></body>
+</html>
