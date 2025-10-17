@@ -1,122 +1,86 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Panel Bot - Firebase Login</title>
-  <style>
-    :root {
-      --bg:#0b1220;
-      --card:#10192f;
-      --muted:#94a3b8;
-      --accent:#7c3aed;
-      --accent-hover:#6d28d9;
-    }
-    *{box-sizing:border-box;font-family:'Inter',sans-serif;}
-    html,body{height:100%;}
-    body{
-      margin:0;
-      background:linear-gradient(180deg,#071025 0%,#0b1220 100%);
-      color:#e6eef8;
-      display:flex;
-      flex-direction:column;
-      min-height:100vh;
-    }
-    main{flex:1;display:flex;flex-direction:column;}
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Panel Bot - Firebase Login</title>
+<style>
+  :root {
+    --bg:#0b1220;
+    --card:#10192f;
+    --muted:#94a3b8;
+    --accent:#7c3aed;
+    --accent-hover:#6d28d9;
+  }
+  *{box-sizing:border-box;font-family:'Inter',sans-serif;}
+  html,body{height:100%;margin:0;background:var(--bg);color:#e6eef8;display:flex;flex-direction:column;}
+  main{flex:1;display:flex;flex-direction:column;}
 
-    /* CARD */
-    .center{
-      flex:1;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      padding:20px;
-    }
-    .card{
-      background:var(--card);
-      padding:32px;
-      border-radius:16px;
-      box-shadow:0 8px 40px rgba(0,0,0,0.4);
-      width:100%;
-      max-width:420px;
-      animation:fadeIn 0.3s ease;
-    }
-    @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-    h2{text-align:center;margin-bottom:20px;font-size:22px;}
-    input,button{
-      width:100%;padding:10px;margin-top:10px;
-      border-radius:8px;border:1px solid rgba(255,255,255,0.1);
-      font-size:15px;
-    }
-    input{background:rgba(255,255,255,0.05);color:white;}
-    button{
-      background:var(--accent);border:0;color:white;cursor:pointer;
-      font-weight:600;transition:0.2s;
-    }
-    button:hover{background:var(--accent-hover);}
-    .small{text-align:center;color:var(--muted);font-size:13px;margin-top:10px;cursor:pointer;}
+  /* ===== Card Auth ===== */
+  .center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;}
+  .card{
+    background:var(--card);padding:32px;border-radius:16px;
+    box-shadow:0 8px 40px rgba(0,0,0,0.4);
+    width:100%;max-width:420px;animation:fadeIn .3s ease;
+  }
+  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  h2{text-align:center;margin-bottom:20px;font-size:22px;}
+  input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);font-size:15px;}
+  input{background:rgba(255,255,255,0.05);color:white;}
+  button{background:var(--accent);border:0;color:white;cursor:pointer;font-weight:600;transition:.2s;}
+  button:hover{background:var(--accent-hover);}
+  .small{text-align:center;color:var(--muted);font-size:13px;margin-top:10px;cursor:pointer;}
 
-    /* PANEL */
-    .wrap{
-      width:100%;max-width:1100px;margin:auto;
-      padding:16px;animation:fadeIn 0.3s ease;flex:1;
-      display:flex;flex-direction:column;
-    }
-    header{
-      display:flex;justify-content:space-between;align-items:center;
-      flex-wrap:wrap;gap:8px;margin-bottom:16px;position:relative;
-    }
-    h1{font-size:22px;margin:0;}
-    .controls{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-    input.search{
-      padding:8px 12px;border-radius:8px;
-      border:1px solid rgba(255,255,255,0.1);
-      background:transparent;color:inherit;flex:1;min-width:180px;
-    }
-    .logout-btn{
-      background:transparent;
-      border:1px solid rgba(255,255,255,0.2);
-      color:#fff;
-      padding:4px 10px;
-      border-radius:6px;
-      cursor:pointer;
-      font-size:13px;
-      transition:0.2s;
-      position:absolute;
-      top:0;
-      right:0;
-    }
-    .logout-btn:hover{background:rgba(255,255,255,0.1);}
+  /* ===== Panel ===== */
+  .wrap{width:100%;max-width:1100px;margin:auto;padding:16px;flex:1;display:flex;flex-direction:column;}
+  header{
+    display:flex;justify-content:space-between;align-items:center;
+    gap:8px;flex-wrap:wrap;margin-bottom:20px;position:relative;
+  }
+  h1{font-size:22px;margin:0;}
+  .search{
+    padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);
+    background:transparent;color:inherit;flex:1;min-width:180px;
+  }
+  .logout-btn{
+    background:transparent;border:1px solid rgba(255,255,255,0.3);
+    color:#fff;padding:4px 10px;border-radius:6px;font-size:13px;
+    cursor:pointer;position:absolute;top:0;right:0;transition:.2s;
+  }
+  .logout-btn:hover{background:rgba(255,255,255,0.1);}
 
-    table{
-      width:100%;border-collapse:collapse;background:var(--card);
-      border-radius:12px;overflow:hidden;
-      box-shadow:0 6px 24px rgba(2,6,23,0.5);
-    }
-    th,td{
-      padding:12px;text-align:left;
-      border-bottom:1px solid rgba(255,255,255,0.05);
-      font-size:14px;
-    }
-    th{color:var(--muted);background:rgba(255,255,255,0.03);}
-    tr:hover td{background:rgba(255,255,255,0.02);}
-    .action-btn{
-      padding:6px 10px;border-radius:8px;cursor:pointer;border:0;
-    }
-    .delete{background:#ef4444;color:white;}
+  /* ===== Table ===== */
+  table{
+    width:100%;border-collapse:collapse;background:var(--card);
+    border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.4);
+  }
+  th,td{
+    padding:12px 14px;text-align:left;
+    border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;
+  }
+  th{
+    color:var(--muted);
+    background:rgba(255,255,255,0.05);
+    font-weight:500;
+  }
+  tr:hover td{background:rgba(255,255,255,0.02);}
+  .delete{
+    background:#ef4444;border:0;color:white;padding:6px 10px;
+    border-radius:8px;cursor:pointer;font-size:13px;
+  }
 
-    footer{
-      text-align:center;color:var(--muted);
-      font-size:13px;margin-top:auto;padding:16px 0;
-    }
+  footer{
+    text-align:center;color:var(--muted);font-size:13px;
+    margin-top:auto;padding:16px 0;border-top:1px solid rgba(255,255,255,0.05);
+  }
 
-    @media(max-width:600px){
-      h1{font-size:18px;}
-      th,td{font-size:13px;}
-      header{flex-direction:column;align-items:flex-start;}
-      .logout-btn{position:relative;align-self:flex-end;margin-top:6px;}
-    }
-  </style>
+  @media(max-width:600px){
+    h1{font-size:18px;}
+    th,td{font-size:13px;}
+    header{flex-direction:column;align-items:flex-start;}
+    .logout-btn{position:relative;align-self:flex-end;margin-top:6px;}
+  }
+</style>
 </head>
 <body>
 <main>
@@ -125,7 +89,7 @@
 <div id="login-page" class="center">
   <div class="card">
     <h2>Login Panel Bot</h2>
-    <input type="text" id="username" placeholder="Username">
+    <input id="username" placeholder="Username">
     <input type="password" id="password" placeholder="Password">
     <button id="login-btn">Login</button>
     <div class="small" id="to-register">Belum punya akun? <u>Daftar</u></div>
@@ -136,7 +100,7 @@
 <div id="register-page" class="center" style="display:none;">
   <div class="card">
     <h2>Buat Akun Baru</h2>
-    <input type="text" id="reg-username" placeholder="Username">
+    <input id="reg-username" placeholder="Username">
     <input type="password" id="reg-password" placeholder="Password">
     <button id="register-btn">Daftar</button>
     <div class="small" id="to-login">Sudah punya akun? <u>Login</u></div>
@@ -155,10 +119,18 @@
       <button id="logout" class="logout-btn">Logout</button>
     </header>
 
-    <div id="status" class="small">Status: <span id="stat-text">Belum terhubung</span></div>
+    <div class="small" id="status">Status: <span id="stat-text">Belum terhubung</span></div>
+
     <table>
       <thead>
-        <tr><th>Nama Grup</th><th>ID Grup</th><th>Dibuat Oleh</th><th>Member</th><th>Terakhir Cek</th><th>Aksi</th></tr>
+        <tr>
+          <th>Nama Grup</th>
+          <th>ID Grup</th>
+          <th>Dimasukkan Oleh</th>
+          <th>Total Member</th>
+          <th>Terakhir Cek</th>
+          <th>Aksi</th>
+        </tr>
       </thead>
       <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
     </table>
@@ -179,7 +151,13 @@
 
     <table>
       <thead>
-        <tr><th>Nama Grup</th><th>ID Grup</th><th>Dibuat Oleh</th><th>Total Member</th><th>Terakhir Cek</th></tr>
+        <tr>
+          <th>Nama Grup</th>
+          <th>ID Grup</th>
+          <th>Dimasukkan Oleh</th>
+          <th>Total Member</th>
+          <th>Terakhir Cek</th>
+        </tr>
       </thead>
       <tbody id="user-tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
     </table>
@@ -190,132 +168,135 @@
 <footer>© 2025 Panel Firestore — Semua hak dilindungi</footer>
 
 <script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-  import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, deleteDoc, onSnapshot } 
-    from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, deleteDoc, onSnapshot } 
+from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-  const firebaseConfig = {
-    apiKey:"AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
-    authDomain:"database-d81c7.firebaseapp.com",
-    projectId:"database-d81c7",
-    storageBucket:"database-d81c7.firebasestorage.app",
-    messagingSenderId:"934049685295",
-    appId:"1:934049685295:web:17ad6001402c57b9434bda"
-  };
-  const app=initializeApp(firebaseConfig);
-  const db=getFirestore(app);
+const firebaseConfig = {
+  apiKey:"AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
+  authDomain:"database-d81c7.firebaseapp.com",
+  projectId:"database-d81c7",
+  storageBucket:"database-d81c7.firebasestorage.app",
+  messagingSenderId:"934049685295",
+  appId:"1:934049685295:web:17ad6001402c57b9434bda"
+};
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-  const loginPage=document.getElementById("login-page"),
-        registerPage=document.getElementById("register-page"),
-        adminPanel=document.getElementById("admin-panel"),
-        userPanel=document.getElementById("user-panel");
+// Elemen utama
+const loginPage=document.getElementById("login-page"),
+      registerPage=document.getElementById("register-page"),
+      adminPanel=document.getElementById("admin-panel"),
+      userPanel=document.getElementById("user-panel");
 
-  document.getElementById("to-register").onclick=()=>{loginPage.style.display="none";registerPage.style.display="flex"};
-  document.getElementById("to-login").onclick=()=>{registerPage.style.display="none";loginPage.style.display="flex"};
+// Navigasi antar halaman
+document.getElementById("to-register").onclick=()=>{loginPage.style.display="none";registerPage.style.display="flex"};
+document.getElementById("to-login").onclick=()=>{registerPage.style.display="none";loginPage.style.display="flex"};
 
-  // REGISTER
-  document.getElementById("register-btn").onclick=async()=>{
-    const u=document.getElementById("reg-username").value.trim(),
-          p=document.getElementById("reg-password").value.trim();
-    if(!u||!p)return alert("Isi semua kolom!");
-    const ref=doc(db,"users",u);
-    const s=await getDoc(ref);
-    if(s.exists())return alert("Username sudah terdaftar!");
-    await setDoc(ref,{username:u,password:p,role:"user"});
-    alert("Registrasi berhasil! Silakan login.");
-    registerPage.style.display="none";loginPage.style.display="flex";
-  };
+// Register
+document.getElementById("register-btn").onclick=async()=>{
+  const u=document.getElementById("reg-username").value.trim(),
+        p=document.getElementById("reg-password").value.trim();
+  if(!u||!p)return alert("Isi semua kolom!");
+  const ref=doc(db,"users",u);
+  const s=await getDoc(ref);
+  if(s.exists())return alert("Username sudah terdaftar!");
+  await setDoc(ref,{username:u,password:p,role:"user"});
+  alert("Registrasi berhasil! Silakan login.");
+  registerPage.style.display="none";loginPage.style.display="flex";
+};
 
-  // LOGIN
-  document.getElementById("login-btn").onclick=async()=>{
-    const u=document.getElementById("username").value.trim(),
-          p=document.getElementById("password").value.trim();
-    if(!u||!p)return alert("Isi semua kolom!");
-    const ref=doc(db,"users",u);
-    const s=await getDoc(ref);
-    if(!s.exists())return alert("Akun tidak ditemukan!");
-    const user=s.data();
-    if(user.password!==p)return alert("Password salah!");
-    localStorage.setItem("user",JSON.stringify(user));
-    showPanel(user.role);
-  };
+// Login
+document.getElementById("login-btn").onclick=async()=>{
+  const u=document.getElementById("username").value.trim(),
+        p=document.getElementById("password").value.trim();
+  if(!u||!p)return alert("Isi semua kolom!");
+  const ref=doc(db,"users",u);
+  const s=await getDoc(ref);
+  if(!s.exists())return alert("Akun tidak ditemukan!");
+  const user=s.data();
+  if(user.password!==p)return alert("Password salah!");
+  localStorage.setItem("user",JSON.stringify(user));
+  showPanel(user.role);
+};
 
-  // LOGOUT
-  document.getElementById("logout").onclick=document.getElementById("logout2").onclick=()=>{
-    localStorage.removeItem("user");location.reload();
-  };
+// Logout
+document.getElementById("logout").onclick=document.getElementById("logout2").onclick=()=>{
+  localStorage.removeItem("user");
+  location.reload();
+};
 
-  const current=JSON.parse(localStorage.getItem("user")||"null");
-  if(current)showPanel(current.role);
+// Auto login
+const current=JSON.parse(localStorage.getItem("user")||"null");
+if(current)showPanel(current.role);
 
-  function showPanel(role){
-    loginPage.style.display=registerPage.style.display="none";
-    if(role==="admin"){adminPanel.style.display="flex";startRealtimeAdmin();}
-    else{userPanel.style.display="flex";startRealtimeUser();}
-  }
+function showPanel(role){
+  loginPage.style.display=registerPage.style.display="none";
+  if(role==="admin"){adminPanel.style.display="flex";startRealtimeAdmin();}
+  else{userPanel.style.display="flex";startRealtimeUser();}
+}
 
-  // ADMIN
-  const tbody=document.getElementById("tbody"),
-        statText=document.getElementById("stat-text"),
-        search=document.getElementById("search");
-  let allGroups=[];
+/* ==== ADMIN ==== */
+const tbody=document.getElementById("tbody"),
+      statText=document.getElementById("stat-text"),
+      search=document.getElementById("search");
+let allGroups=[];
+function renderAdmin(rows){
+  if(!rows.length)return tbody.innerHTML='<tr><td colspan="6">Tidak ada grup.</td></tr>';
+  tbody.innerHTML=rows.map(r=>`
+    <tr>
+      <td>${r.title||'(Tanpa Nama)'}</td>
+      <td>${r.id}</td>
+      <td>${r.addedBy||'-'}</td>
+      <td>${r.memberCount||'-'}</td>
+      <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
+      <td><button class="delete" data-id="${r.id}">Hapus</button></td>
+    </tr>`).join('');
+  document.querySelectorAll(".delete").forEach(b=>{
+    b.onclick=async()=>{if(confirm("Yakin hapus grup ini?"))await deleteDoc(doc(db,"groups",b.dataset.id));};
+  });
+}
+function applyFilterAdmin(){
+  const t=(search.value||'').toLowerCase();
+  renderAdmin(allGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
+}
+function startRealtimeAdmin(){
+  const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
+  onSnapshot(q,s=>{
+    allGroups=s.docs.map(d=>({id:d.id,...d.data()}));
+    applyFilterAdmin();
+    statText.textContent="Tersinkron — "+allGroups.length+" grup";
+  },e=>statText.textContent="Error: "+e.message);
+}
+search.addEventListener("input",applyFilterAdmin);
 
-  function renderAdmin(rows){
-    if(!rows.length)return tbody.innerHTML='<tr><td colspan="6">Tidak ada grup.</td></tr>';
-    tbody.innerHTML=rows.map(r=>`
-      <tr>
-        <td>${r.title||'(Tanpa Nama)'}</td>
-        <td>${r.id}</td>
-        <td>${r.addedBy||'-'}</td>
-        <td>${r.memberCount||'-'}</td>
-        <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
-        <td><button class="action-btn delete" data-id="${r.id}">Hapus</button></td>
-      </tr>`).join('');
-    document.querySelectorAll(".delete").forEach(b=>{
-      b.onclick=async()=>{if(confirm("Yakin hapus grup ini?"))await deleteDoc(doc(db,"groups",b.dataset.id));};
-    });
-  }
-  function applyFilterAdmin(){
-    const t=(search.value||'').toLowerCase();
-    renderAdmin(allGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
-  }
-  function startRealtimeAdmin(){
-    const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
-    onSnapshot(q,s=>{
-      allGroups=s.docs.map(d=>({id:d.id,...d.data()}));
-      applyFilterAdmin();
-      statText.textContent="Tersinkron — "+allGroups.length+" grup";
-    },e=>statText.textContent="Error: "+e.message);
-  }
-  search.addEventListener("input",applyFilterAdmin);
-
-  // USER
-  const userTbody=document.getElementById("user-tbody"),
-        searchUser=document.getElementById("search-user");
-  let userGroups=[];
-  function renderUser(rows){
-    if(!rows.length)return userTbody.innerHTML='<tr><td colspan="5">Tidak ada grup.</td></tr>';
-    userTbody.innerHTML=rows.map(r=>`
-      <tr>
-        <td>${r.title||'(Tanpa Nama)'}</td>
-        <td>${r.id}</td>
-        <td>${r.addedBy||'-'}</td>
-        <td>${r.memberCount||'-'}</td>
-        <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
-      </tr>`).join('');
-  }
-  function applyFilterUser(){
-    const t=(searchUser.value||'').toLowerCase();
-    renderUser(userGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
-  }
-  function startRealtimeUser(){
-    const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
-    onSnapshot(q,s=>{
-      userGroups=s.docs.map(d=>({id:d.id,...d.data()}));
-      applyFilterUser();
-    });
-  }
-  searchUser.addEventListener("input",applyFilterUser);
+/* ==== USER ==== */
+const userTbody=document.getElementById("user-tbody"),
+      searchUser=document.getElementById("search-user");
+let userGroups=[];
+function renderUser(rows){
+  if(!rows.length)return userTbody.innerHTML='<tr><td colspan="5">Tidak ada grup.</td></tr>';
+  userTbody.innerHTML=rows.map(r=>`
+    <tr>
+      <td>${r.title||'(Tanpa Nama)'}</td>
+      <td>${r.id}</td>
+      <td>${r.addedBy||'-'}</td>
+      <td>${r.memberCount||'-'}</td>
+      <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
+    </tr>`).join('');
+}
+function applyFilterUser(){
+  const t=(searchUser.value||'').toLowerCase();
+  renderUser(userGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
+}
+function startRealtimeUser(){
+  const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
+  onSnapshot(q,s=>{
+    userGroups=s.docs.map(d=>({id:d.id,...d.data()}));
+    applyFilterUser();
+  });
+}
+searchUser.addEventListener("input",applyFilterUser);
 </script>
 </body>
 </html>
