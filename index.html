@@ -6,92 +6,222 @@
   <title>Panel Bot - Firebase Login</title>
   <style>
     :root {
-      --bg:#0b1220; --card:#0f1724; --muted:#94a3b8; --accent:#7c3aed;
+      --bg:#0b1220; 
+      --card:#10192f;
+      --muted:#94a3b8;
+      --accent:#7c3aed;
+      --accent-hover:#6d28d9;
     }
-    *{box-sizing:border-box;font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,'Helvetica Neue',Arial;}
-    body{margin:0;background:linear-gradient(180deg,#071025 0%,#0b1220 100%);color:#e6eef8;min-height:100vh;}
-    .center{display:flex;align-items:center;justify-content:center;height:100vh;}
-    .card{background:var(--card);padding:28px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.4);width:100%;max-width:400px;}
-    h2{text-align:center;margin-bottom:20px;}
-    input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);font-size:15px;}
-    input{background:rgba(255,255,255,0.05);color:white;}
-    button{background:var(--accent);border:0;color:white;cursor:pointer;font-weight:600;}
-    button:hover{opacity:0.9;}
-    .small{text-align:center;color:var(--muted);font-size:13px;margin-top:10px;cursor:pointer;}
-    .wrap{max-width:980px;margin:32px auto;padding:20px;}
-    header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;}
-    h1{font-size:22px;margin:0;}
-    .controls{display:flex;gap:8px;align-items:center;}
-    input.search{padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);background:transparent;color:inherit;}
-    table{width:100%;border-collapse:collapse;margin-top:12px;}
-    th,td{padding:10px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.05);}
-    th{color:var(--muted);}
-    .action-btn{padding:6px 10px;border-radius:8px;cursor:pointer;border:0;}
-    .delete{background:#ef4444;color:white;}
-    footer{margin-top:20px;text-align:center;color:var(--muted);font-size:13px;}
+    * { box-sizing:border-box; font-family:'Inter',sans-serif; }
+    body {
+      margin:0; 
+      background:linear-gradient(180deg,#071025 0%,#0b1220 100%);
+      color:#e6eef8;
+      min-height:100vh;
+    }
+
+    /* Centered forms */
+    .center {
+      display:flex;align-items:center;justify-content:center;
+      height:100vh;padding:20px;
+    }
+
+    .card {
+      background:var(--card);
+      padding:32px;
+      border-radius:16px;
+      box-shadow:0 8px 40px rgba(0,0,0,0.4);
+      width:100%;max-width:420px;
+      animation:fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none;} }
+
+    h2 {
+      text-align:center;
+      margin-bottom:20px;
+      font-size:22px;
+    }
+
+    input,button {
+      width:100%;
+      padding:10px;
+      margin-top:10px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      font-size:15px;
+    }
+
+    input {
+      background:rgba(255,255,255,0.05);
+      color:white;
+    }
+
+    button {
+      background:var(--accent);
+      border:0;
+      color:white;
+      cursor:pointer;
+      font-weight:600;
+      transition:0.2s;
+    }
+
+    button:hover { background:var(--accent-hover); }
+
+    .small {
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+      margin-top:10px;
+      cursor:pointer;
+    }
+
+    /* Admin & User page */
+    .wrap {
+      max-width:1000px;
+      margin:40px auto;
+      padding:20px;
+      animation:fadeIn 0.3s ease;
+    }
+
+    header {
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin-bottom:20px;
+      flex-wrap:wrap;
+      gap:10px;
+    }
+
+    h1 { font-size:22px;margin:0; }
+
+    .controls {
+      display:flex;gap:8px;align-items:center;
+    }
+
+    input.search {
+      padding:8px 12px;
+      border-radius:8px;
+      border:1px solid rgba(255,255,255,0.1);
+      background:transparent;
+      color:inherit;
+    }
+
+    table {
+      width:100%;
+      border-collapse:collapse;
+      background:var(--card);
+      border-radius:12px;
+      overflow:hidden;
+      box-shadow:0 6px 24px rgba(2,6,23,0.5);
+    }
+
+    th, td {
+      padding:12px;
+      text-align:left;
+      border-bottom:1px solid rgba(255,255,255,0.05);
+      font-size:14px;
+    }
+
+    th { color:var(--muted); background:rgba(255,255,255,0.03); }
+
+    tr:hover td { background:rgba(255,255,255,0.02); }
+
+    .action-btn {
+      padding:6px 10px;
+      border-radius:8px;
+      cursor:pointer;
+      border:0;
+    }
+
+    .delete {
+      background:#ef4444;
+      color:white;
+    }
+
+    footer {
+      margin-top:20px;
+      text-align:center;
+      color:var(--muted);
+      font-size:13px;
+    }
   </style>
 </head>
 <body>
 
-<!-- ========== LOGIN PAGE ========== -->
+<!-- LOGIN -->
 <div id="login-page" class="center">
   <div class="card">
     <h2>Login Panel Bot</h2>
     <input type="text" id="username" placeholder="Username" />
     <input type="password" id="password" placeholder="Password" />
     <button id="login-btn">Login</button>
-    <div class="small" id="to-register">Belum punya akun? Daftar</div>
+    <div class="small" id="to-register">Belum punya akun? <u>Daftar</u></div>
   </div>
 </div>
 
-<!-- ========== REGISTER PAGE ========== -->
+<!-- REGISTER -->
 <div id="register-page" class="center" style="display:none;">
   <div class="card">
-    <h2>Daftar Akun</h2>
+    <h2>Buat Akun Baru</h2>
     <input type="text" id="reg-username" placeholder="Username" />
     <input type="password" id="reg-password" placeholder="Password" />
     <button id="register-btn">Daftar</button>
-    <div class="small" id="to-login">Sudah punya akun? Login</div>
+    <div class="small" id="to-login">Sudah punya akun? <u>Login</u></div>
   </div>
 </div>
 
-<!-- ========== ADMIN PANEL ========== -->
+<!-- ADMIN PANEL -->
 <div id="admin-panel" style="display:none;">
   <div class="wrap">
     <header>
       <div>
-        <h1>Panel Admin Bot — Firestore</h1>
-        <div class="small">Lihat & hapus grup dari koleksi <code>groups</code></div>
+        <h1>Panel Admin Bot</h1>
+        <div class="small">Kelola data grup di Firestore</div>
       </div>
       <div class="controls">
-        <input id="search" class="search" placeholder="Cari nama grup..." />
+        <input id="search" class="search" placeholder="Cari grup..." />
         <button id="logout">Logout</button>
       </div>
     </header>
-    <section class="card">
+    <section>
       <div id="status" class="small">Status: <span id="stat-text">Belum terhubung</span></div>
       <table>
-        <thead><tr><th>Group</th><th>Added By</th><th>Member</th><th>Last Checked</th><th>Aksi</th></tr></thead>
+        <thead><tr><th>Nama Grup</th><th>Dibuat Oleh</th><th>Member</th><th>Terakhir Cek</th><th>Aksi</th></tr></thead>
         <tbody id="tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
       </table>
     </section>
-    <footer>© 2025 Panel Bot Firestore</footer>
+    <footer>© 2025 Panel Admin Firestore</footer>
   </div>
 </div>
 
-<!-- ========== USER PAGE (non-admin) ========== -->
-<div id="user-page" class="center" style="display:none;">
-  <div class="card">
-    <h2>Selamat Datang</h2>
-    <p style="text-align:center;">Anda login sebagai <b>user biasa</b>.</p>
-    <button id="logout2">Logout</button>
+<!-- USER PAGE -->
+<div id="user-panel" style="display:none;">
+  <div class="wrap">
+    <header>
+      <div>
+        <h1>Daftar Grup</h1>
+        <div class="small">Lihat daftar grup yang tersedia</div>
+      </div>
+      <div class="controls">
+        <input id="search-user" class="search" placeholder="Cari grup..." />
+        <button id="logout2">Logout</button>
+      </div>
+    </header>
+    <section>
+      <table>
+        <thead><tr><th>Nama Grup</th><th>Total Member</th></tr></thead>
+        <tbody id="user-tbody"><tr><td colspan="2">Memuat data...</td></tr></tbody>
+      </table>
+    </section>
+    <footer>© 2025 Panel User Firestore</footer>
   </div>
 </div>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
   import {
-    getFirestore, collection, doc, setDoc, getDoc, getDocs, query, orderBy, deleteDoc, onSnapshot
+    getFirestore, collection, doc, setDoc, getDoc, query, orderBy, deleteDoc, onSnapshot
   } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
   const firebaseConfig = {
@@ -107,28 +237,28 @@
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
-  // Elemen
+  // Elements
   const loginPage = document.getElementById("login-page");
   const registerPage = document.getElementById("register-page");
   const adminPanel = document.getElementById("admin-panel");
-  const userPage = document.getElementById("user-page");
+  const userPanel = document.getElementById("user-panel");
 
-  // Navigasi antar halaman
+  // Navigation
   document.getElementById("to-register").onclick = () => { loginPage.style.display = "none"; registerPage.style.display = "flex"; };
   document.getElementById("to-login").onclick = () => { registerPage.style.display = "none"; loginPage.style.display = "flex"; };
 
-  // Registrasi
+  // Register
   document.getElementById("register-btn").onclick = async () => {
     const username = document.getElementById("reg-username").value.trim();
     const password = document.getElementById("reg-password").value.trim();
     if (!username || !password) return alert("Isi semua kolom!");
 
     const docRef = doc(db, "users", username);
-    const docSnap = await getDoc(docRef);
-    if (docSnap.exists()) return alert("Username sudah terdaftar!");
+    const snap = await getDoc(docRef);
+    if (snap.exists()) return alert("Username sudah terdaftar!");
 
     await setDoc(docRef, { username, password, role: "user" });
-    alert("Pendaftaran berhasil! Silakan login.");
+    alert("Registrasi berhasil! Silakan login.");
     registerPage.style.display = "none";
     loginPage.style.display = "flex";
   };
@@ -139,24 +269,27 @@
     const password = document.getElementById("password").value.trim();
 
     if (!username || !password) return alert("Isi semua kolom!");
-    const userRef = doc(db, "users", username);
-    const userSnap = await getDoc(userRef);
 
-    if (!userSnap.exists()) return alert("Akun tidak ditemukan!");
-    const user = userSnap.data();
+    const userRef = doc(db, "users", username);
+    const snap = await getDoc(userRef);
+    if (!snap.exists()) return alert("Akun tidak ditemukan!");
+
+    const user = snap.data();
     if (user.password !== password) return alert("Password salah!");
 
     localStorage.setItem("user", JSON.stringify(user));
     showPanel(user.role);
   };
 
+  // Show page
   function showPanel(role) {
     loginPage.style.display = registerPage.style.display = "none";
     if (role === "admin") {
       adminPanel.style.display = "block";
-      startRealtime();
+      startRealtimeAdmin();
     } else {
-      userPage.style.display = "flex";
+      userPanel.style.display = "block";
+      startRealtimeUser();
     }
   }
 
@@ -166,17 +299,17 @@
     location.reload();
   };
 
-  // Auto login jika sudah tersimpan
+  // Auto login
   const current = JSON.parse(localStorage.getItem("user") || "null");
   if (current) showPanel(current.role);
 
-  // ===== Admin Panel (Groups) =====
+  // ===== ADMIN =====
   const tbody = document.getElementById("tbody");
   const statText = document.getElementById("stat-text");
   const search = document.getElementById("search");
   let allGroups = [];
 
-  function renderTable(rows) {
+  function renderAdmin(rows) {
     if (!rows.length) {
       tbody.innerHTML = '<tr><td colspan="5">Tidak ada grup.</td></tr>';
       return;
@@ -191,7 +324,7 @@
       </tr>
     `).join('');
 
-    document.querySelectorAll('.delete').forEach(btn => {
+    document.querySelectorAll(".delete").forEach(btn => {
       btn.onclick = async () => {
         if (confirm("Yakin hapus grup ini?")) {
           await deleteDoc(doc(db, "groups", btn.dataset.id));
@@ -200,21 +333,54 @@
     });
   }
 
-  function applyFilter() {
+  function applyFilterAdmin() {
     const term = (search.value || '').toLowerCase();
-    renderTable(allGroups.filter(g => (g.title || '').toLowerCase().includes(term)));
+    renderAdmin(allGroups.filter(g => (g.title || '').toLowerCase().includes(term)));
   }
 
-  async function startRealtime() {
+  function startRealtimeAdmin() {
     const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
     onSnapshot(q, snap => {
       allGroups = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-      applyFilter();
+      applyFilterAdmin();
       statText.textContent = "Tersinkron — " + allGroups.length + " grup";
     }, err => statText.textContent = "Error: " + err.message);
   }
 
-  search.addEventListener("input", applyFilter);
+  search.addEventListener("input", applyFilterAdmin);
+
+  // ===== USER =====
+  const userTbody = document.getElementById("user-tbody");
+  const searchUser = document.getElementById("search-user");
+  let userGroups = [];
+
+  function renderUser(rows) {
+    if (!rows.length) {
+      userTbody.innerHTML = '<tr><td colspan="2">Tidak ada grup.</td></tr>';
+      return;
+    }
+    userTbody.innerHTML = rows.map(r => `
+      <tr>
+        <td>${r.title || '(Tanpa Nama)'}</td>
+        <td>${r.memberCount || '-'}</td>
+      </tr>
+    `).join('');
+  }
+
+  function applyFilterUser() {
+    const term = (searchUser.value || '').toLowerCase();
+    renderUser(userGroups.filter(g => (g.title || '').toLowerCase().includes(term)));
+  }
+
+  function startRealtimeUser() {
+    const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
+    onSnapshot(q, snap => {
+      userGroups = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      applyFilterUser();
+    });
+  }
+
+  searchUser.addEventListener("input", applyFilterUser);
 </script>
 </body>
 </html>
