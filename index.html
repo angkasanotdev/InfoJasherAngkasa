@@ -1,302 +1,635 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Panel Bot - Firebase Login</title>
-<style>
-  :root {
-    --bg:#0b1220;
-    --card:#10192f;
-    --muted:#94a3b8;
-    --accent:#7c3aed;
-    --accent-hover:#6d28d9;
-  }
-  *{box-sizing:border-box;font-family:'Inter',sans-serif;}
-  html,body{height:100%;margin:0;background:var(--bg);color:#e6eef8;display:flex;flex-direction:column;}
-  main{flex:1;display:flex;flex-direction:column;}
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Panel Bot - Firebase Login</title>
+  <style>
+    :root {
+      --bg: #0b1220;
+      --card: #10192f;
+      --muted: #94a3b8;
+      --accent: #7c3aed;
+      --accent-hover: #6d28d9;
+    }
 
-  /* ===== Card Auth ===== */
-  .center{flex:1;display:flex;align-items:center;justify-content:center;padding:20px;}
-  .card{
-    background:var(--card);padding:32px;border-radius:16px;
-    box-shadow:0 8px 40px rgba(0,0,0,0.4);
-    width:100%;max-width:420px;animation:fadeIn .3s ease;
-  }
-  @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
-  h2{text-align:center;margin-bottom:20px;font-size:22px;}
-  input,button{width:100%;padding:10px;margin-top:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);font-size:15px;}
-  input{background:rgba(255,255,255,0.05);color:white;}
-  button{background:var(--accent);border:0;color:white;cursor:pointer;font-weight:600;transition:.2s;}
-  button:hover{background:var(--accent-hover);}
-  .small{text-align:center;color:var(--muted);font-size:13px;margin-top:10px;cursor:pointer;}
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      padding: 0;
+    }
 
-  /* ===== Panel ===== */
-  .wrap{width:100%;max-width:1100px;margin:auto;padding:16px;flex:1;display:flex;flex-direction:column;}
-  header{
-    display:flex;justify-content:space-between;align-items:center;
-    gap:8px;flex-wrap:wrap;margin-bottom:20px;position:relative;
-  }
-  h1{font-size:22px;margin:0;}
-  .search{
-    padding:8px 12px;border-radius:8px;border:1px solid rgba(255,255,255,0.1);
-    background:transparent;color:inherit;flex:1;min-width:180px;
-  }
-  .logout-btn{
-    background:transparent;border:1px solid rgba(255,255,255,0.3);
-    color:#fff;padding:4px 10px;border-radius:6px;font-size:13px;
-    cursor:pointer;position:absolute;top:0;right:0;transition:.2s;
-  }
-  .logout-btn:hover{background:rgba(255,255,255,0.1);}
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: #e6eef8;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden;
+    }
 
-  /* ===== Table ===== */
-  table{
-    width:100%;border-collapse:collapse;background:var(--card);
-    border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,0.4);
-  }
-  th,td{
-    padding:12px 14px;text-align:left;
-    border-bottom:1px solid rgba(255,255,255,0.05);font-size:14px;
-  }
-  th{
-    color:var(--muted);
-    background:rgba(255,255,255,0.05);
-    font-weight:500;
-  }
-  tr:hover td{background:rgba(255,255,255,0.02);}
-  .delete{
-    background:#ef4444;border:0;color:white;padding:6px 10px;
-    border-radius:8px;cursor:pointer;font-size:13px;
-  }
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
 
-  footer{
-    text-align:center;color:var(--muted);font-size:13px;
-    margin-top:auto;padding:16px 0;border-top:1px solid rgba(255,255,255,0.05);
-  }
+    .center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
 
-  @media(max-width:600px){
-    h1{font-size:18px;}
-    th,td{font-size:13px;}
-    header{flex-direction:column;align-items:flex-start;}
-    .logout-btn{position:relative;align-self:flex-end;margin-top:6px;}
-  }
-</style>
+    .card {
+      background: var(--card);
+      padding: 32px;
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+      width: 100%;
+      max-width: 420px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: none; }
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 22px;
+    }
+
+    input, button {
+      width: 100%;
+      padding: 10px;
+      margin-top: 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      font-size: 15px;
+    }
+
+    input {
+      background: rgba(255,255,255,0.05);
+      color: white;
+    }
+
+    button {
+      background: var(--accent);
+      border: 0;
+      color: white;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    .small {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 10px;
+      cursor: pointer;
+    }
+
+    .wrap {
+      width: 100%;
+      max-width: 1100px;
+      margin: auto;
+      padding: 16px;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+      position: relative;
+      z-index: 10;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .search {
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,0.1);
+      background: transparent;
+      color: inherit;
+      flex: 1;
+      min-width: 180px;
+    }
+
+    .logout-btn {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.3);
+      color: #fff;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 13px;
+      cursor: pointer;
+      position: absolute;
+      top: 0;
+      right: 0;
+      z-index: 100;
+      transition: 0.2s;
+    }
+
+    .logout-btn:hover {
+      background: rgba(255,255,255,0.1);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--card);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+      flex: 1;
+      display: block;
+      max-height: calc(100vh - 200px);
+      overflow-y: auto;
+    }
+
+    th, td {
+      padding: 12px 14px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 14px;
+    }
+
+    th {
+      color: var(--muted);
+      background: rgba(255,255,255,0.05);
+      font-weight: 500;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    tr:hover td {
+      background: rgba(255,255,255,0.02);
+    }
+
+    .delete {
+      background: #ef4444;
+      border: 0;
+      color: white;
+      padding: 6px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    /* MODAL DETAIL GRUP */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1000;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .modal-content {
+      background: var(--card);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.5);
+      width: 90%;
+      max-width: 500px;
+      max-height: 80vh;
+      overflow-y: auto;
+      position: relative;
+      padding: 24px;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .modal-content h3 {
+      margin-top: 0;
+      margin-bottom: 16px;
+      font-size: 20px;
+      text-align: center;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 12px;
+      right: 16px;
+      font-size: 28px;
+      color: #fff;
+      cursor: pointer;
+      z-index: 10;
+      background: rgba(255,255,255,0.1);
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+
+    .close-btn:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    .modal-body p {
+      margin: 8px 0;
+      line-height: 1.5;
+      word-wrap: break-word;
+    }
+
+    .modal-body p strong {
+      color: var(--accent);
+    }
+
+    /* SCROLLBAR STYLE */
+    .modal-content::-webkit-scrollbar {
+      width: 8px;
+    }
+
+    .modal-content::-webkit-scrollbar-track {
+      background: rgba(255,255,255,0.05);
+      border-radius: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb {
+      background: rgba(255,255,255,0.1);
+      border-radius: 10px;
+    }
+
+    .modal-content::-webkit-scrollbar-thumb:hover {
+      background: rgba(255,255,255,0.2);
+    }
+
+    footer {
+      text-align: center;
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: auto;
+      padding: 16px 0;
+      border-top: 1px solid rgba(255,255,255,0.05);
+      position: sticky;
+      bottom: 0;
+      background: var(--bg);
+      z-index: 100;
+    }
+
+    /* MOBILE RESPONSIVE */
+    @media (max-width: 768px) {
+      .wrap {
+        padding: 12px;
+      }
+      table {
+        max-height: calc(100vh - 220px);
+      }
+      .modal-content {
+        max-width: 95%;
+        padding: 16px;
+      }
+      .logout-btn {
+        top: 8px;
+        right: 8px;
+        padding: 4px 8px;
+        font-size: 12px;
+      }
+    }
+  </style>
 </head>
 <body>
-<main>
+  <main>
 
-<!-- LOGIN -->
-<div id="login-page" class="center">
-  <div class="card">
-    <h2>Login Panel Bot</h2>
-    <input id="username" placeholder="Username">
-    <input type="password" id="password" placeholder="Password">
-    <button id="login-btn">Login</button>
-    <div class="small" id="to-register">Belum punya akun? <u>Daftar</u></div>
-  </div>
-</div>
-
-<!-- REGISTER -->
-<div id="register-page" class="center" style="display:none;">
-  <div class="card">
-    <h2>Buat Akun Baru</h2>
-    <input id="reg-username" placeholder="Username">
-    <input type="password" id="reg-password" placeholder="Password">
-    <button id="register-btn">Daftar</button>
-    <div class="small" id="to-login">Sudah punya akun? <u>Login</u></div>
-  </div>
-</div>
-
-<!-- ADMIN PANEL -->
-<div id="admin-panel" style="display:none;flex:1;">
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Panel Admin Bot</h1>
-        <div class="small">Kelola data grup di Firestore</div>
+    <!-- LOGIN -->
+    <div id="login-page" class="center">
+      <div class="card">
+        <h2>Login Panel Bot</h2>
+        <input type="text" id="username" placeholder="Username" autocomplete="username">
+        <input type="password" id="password" placeholder="Password" autocomplete="current-password">
+        <button id="login-btn">Login</button>
+        <div class="small" id="to-register">Belum punya akun? <u>Daftar</u></div>
       </div>
-      <input id="search" class="search" placeholder="Cari grup...">
-      <button id="logout" class="logout-btn">Logout</button>
-    </header>
+    </div>
 
-    <div class="small" id="status">Status: <span id="stat-text">Belum terhubung</span></div>
-
-    <table>
-      <thead>
-        <tr>
-          <th>Nama Grup</th>
-          <th>ID Grup</th>
-          <th>Dimasukkan Oleh</th>
-          <th>Total Member</th>
-          <th>Terakhir Cek</th>
-          <th>Aksi</th>
-        </tr>
-      </thead>
-      <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
-    </table>
-  </div>
-</div>
-
-<!-- USER PANEL -->
-<div id="user-panel" style="display:none;flex:1;">
-  <div class="wrap">
-    <header>
-      <div>
-        <h1>Daftar Grup</h1>
-        <div class="small">Lihat detail grup yang tersedia</div>
+    <!-- REGISTER -->
+    <div id="register-page" class="center" style="display:none;">
+      <div class="card">
+        <h2>Buat Akun Baru</h2>
+        <input type="text" id="reg-username" placeholder="Username" autocomplete="username">
+        <input type="password" id="reg-password" placeholder="Password" autocomplete="new-password">
+        <button id="register-btn">Daftar</button>
+        <div class="small" id="to-login">Sudah punya akun? <u>Login</u></div>
       </div>
-      <input id="search-user" class="search" placeholder="Cari grup...">
-      <button id="logout2" class="logout-btn">Logout</button>
-    </header>
+    </div>
 
-    <table>
-      <thead>
-        <tr>
-          <th>Nama Grup</th>
-          <th>ID Grup</th>
-          <th>Dimasukkan Oleh</th>
-          <th>Total Member</th>
-          <th>Terakhir Cek</th>
+    <!-- ADMIN PANEL -->
+    <div id="admin-panel" style="display:none;flex:1;">
+      <div class="wrap">
+        <header>
+          <div>
+            <h1>Panel Admin Bot</h1>
+            <div class="small">Kelola data grup di Firestore</div>
+          </div>
+          <input id="search" class="search" placeholder="Cari grup...">
+          <button id="logout" class="logout-btn">Logout</button>
+        </header>
+        <div class="small" id="status">Status: <span id="stat-text">Belum terhubung</span></div>
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Grup</th>
+              <th>ID Grup</th>
+              <th>Dimasukkan Oleh</th>
+              <th>Total Member</th>
+              <th>Terakhir Cek</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- USER PANEL -->
+    <div id="user-panel" style="display:none;flex:1;">
+      <div class="wrap">
+        <header>
+          <div>
+            <h1>Daftar Grup</h1>
+            <div class="small">Lihat detail grup yang tersedia</div>
+          </div>
+          <input id="search-user" class="search" placeholder="Cari grup...">
+          <button id="logout2" class="logout-btn">Logout</button>
+        </header>
+        <table>
+          <thead>
+            <tr>
+              <th>Nama Grup</th>
+              <th>ID Grup</th>
+              <th>Dimasukkan Oleh</th>
+              <th>Total Member</th>
+              <th>Terakhir Cek</th>
+            </tr>
+          </thead>
+          <tbody id="user-tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- MODAL DETAIL GRUP -->
+    <div id="group-detail-modal" class="modal">
+      <div class="modal-content">
+        <span class="close-btn">&times;</span>
+        <h3>Detail Grup</h3>
+        <div class="modal-body">
+          <p><strong>Nama Grup:</strong> <span id="modal-title">-</span></p>
+          <p><strong>ID Grup:</strong> <span id="modal-id">-</span></p>
+          <p><strong>Dibuat Oleh:</strong> <span id="modal-added-by">-</span></p>
+          <p><strong>Total Member:</strong> <span id="modal-member-count">-</span></p>
+          <p><strong>Terakhir Cek:</strong> <span id="modal-last-checked">-</span></p>
+          <p><strong>Deskripsi:</strong> <span id="modal-description">-</span></p>
+        </div>
+      </div>
+    </div>
+
+  </main>
+  <footer>© 2025 Panel Firestore — Semua hak dilindungi</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+    import { 
+      getFirestore, collection, doc, setDoc, getDoc, query, orderBy, deleteDoc, onSnapshot 
+    } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
+      authDomain: "database-d81c7.firebaseapp.com",
+      projectId: "database-d81c7",
+      storageBucket: "database-d81c7.appspot.com",
+      messagingSenderId: "934049685295",
+      appId: "1:934049685295:web:17ad6001402c57b9434bda"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    // Elemen utama
+    const loginPage = document.getElementById("login-page"),
+          registerPage = document.getElementById("register-page"),
+          adminPanel = document.getElementById("admin-panel"),
+          userPanel = document.getElementById("user-panel");
+
+    // Navigasi
+    document.getElementById("to-register").onclick = () => {
+      loginPage.style.display = "none";
+      registerPage.style.display = "flex";
+    };
+    document.getElementById("to-login").onclick = () => {
+      registerPage.style.display = "none";
+      loginPage.style.display = "flex";
+    };
+
+    // Register
+    document.getElementById("register-btn").onclick = async () => {
+      const u = document.getElementById("reg-username").value.trim(),
+            p = document.getElementById("reg-password").value.trim();
+      if (!u || !p) return alert("Isi semua kolom!");
+      const ref = doc(db, "users", u);
+      const s = await getDoc(ref);
+      if (s.exists()) return alert("Username sudah terdaftar!");
+      await setDoc(ref, { username: u, password: p, role: "user" });
+      alert("Registrasi berhasil! Silakan login.");
+      registerPage.style.display = "none";
+      loginPage.style.display = "flex";
+    };
+
+    // Login
+    document.getElementById("login-btn").onclick = async () => {
+      const u = document.getElementById("username").value.trim(),
+            p = document.getElementById("password").value.trim();
+      if (!u || !p) return alert("Isi semua kolom!");
+      const ref = doc(db, "users", u);
+      const s = await getDoc(ref);
+      if (!s.exists()) return alert("Akun tidak ditemukan!");
+      const user = s.data();
+      if (user.password !== p) return alert("Password salah!");
+      localStorage.setItem("user", JSON.stringify(user));
+      showPanel(user.role);
+    };
+
+    // Logout
+    document.getElementById("logout").onclick = document.getElementById("logout2").onclick = () => {
+      localStorage.removeItem("user");
+      location.reload();
+    };
+
+    // Auto-login
+    let current = null;
+    try {
+      current = JSON.parse(localStorage.getItem("user") || "null");
+    } catch (e) {
+      current = null;
+    }
+    if (current) showPanel(current.role);
+
+    function showPanel(role) {
+      loginPage.style.display = "none";
+      registerPage.style.display = "none";
+      adminPanel.style.display = "none";
+      userPanel.style.display = "none";
+      if (role === "admin") {
+        adminPanel.style.display = "flex";
+        startRealtimeAdmin();
+      } else {
+        userPanel.style.display = "flex";
+        startRealtimeUser();
+      }
+    }
+
+    /* ==== ADMIN ==== */
+    const tbody = document.getElementById("tbody"),
+          statText = document.getElementById("stat-text"),
+          search = document.getElementById("search");
+    let allGroups = [];
+
+    function renderAdmin(rows) {
+      if (!rows.length) return tbody.innerHTML = '<tr><td colspan="6">Tidak ada grup.</td></tr>';
+      tbody.innerHTML = rows.map(r => `
+        <tr class="group-row" 
+            data-id="${r.id}" 
+            data-title="${r.title || '(Tanpa Nama)'}" 
+            data-addedby="${r.addedBy || '-'}" 
+            data-membercount="${r.memberCount || '-'}" 
+            data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}" 
+            data-description="${r.description || 'Tidak ada deskripsi.'}">
+          <td>${r.title || '(Tanpa Nama)'}</td>
+          <td>${r.id}</td>
+          <td>${r.addedBy || '-'}</td>
+          <td>${r.memberCount || '-'}</td>
+          <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
+          <td><button class="delete" data-id="${r.id}">Hapus</button></td>
         </tr>
-      </thead>
-      <tbody id="user-tbody"><tr><td colspan="5">Memuat data...</td></tr></tbody>
-    </table>
-  </div>
-</div>
+      `).join('');
 
-</main>
-<footer>© 2025 Panel Firestore — Semua hak dilindungi</footer>
+      document.querySelectorAll(".group-row").forEach(row => {
+        row.onclick = () => showGroupDetail(row.dataset);
+      });
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-import { getFirestore, collection, doc, setDoc, getDoc, query, orderBy, deleteDoc, onSnapshot } 
-from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+      document.querySelectorAll(".delete").forEach(b => {
+        b.onclick = async () => {
+          if (confirm("Yakin hapus grup ini?")) await deleteDoc(doc(db, "groups", b.dataset.id));
+        };
+      });
+    }
 
-const firebaseConfig = {
-  apiKey:"AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
-  authDomain:"database-d81c7.firebaseapp.com",
-  projectId:"database-d81c7",
-  storageBucket:"database-d81c7.firebasestorage.app",
-  messagingSenderId:"934049685295",
-  appId:"1:934049685295:web:17ad6001402c57b9434bda"
-};
-const app=initializeApp(firebaseConfig);
-const db=getFirestore(app);
+    function applyFilterAdmin() {
+      const t = (search.value || '').toLowerCase();
+      renderAdmin(allGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
+    }
 
-// Elemen utama
-const loginPage=document.getElementById("login-page"),
-      registerPage=document.getElementById("register-page"),
-      adminPanel=document.getElementById("admin-panel"),
-      userPanel=document.getElementById("user-panel");
+    function startRealtimeAdmin() {
+      const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
+      onSnapshot(q, s => {
+        allGroups = s.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilterAdmin();
+        statText.textContent = "Tersinkron — " + allGroups.length + " grup";
+      }, e => {
+        statText.textContent = "Error: " + e.message;
+      });
+    }
 
-// Navigasi antar halaman
-document.getElementById("to-register").onclick=()=>{loginPage.style.display="none";registerPage.style.display="flex"};
-document.getElementById("to-login").onclick=()=>{registerPage.style.display="none";loginPage.style.display="flex"};
+    search.addEventListener("input", applyFilterAdmin);
 
-// Register
-document.getElementById("register-btn").onclick=async()=>{
-  const u=document.getElementById("reg-username").value.trim(),
-        p=document.getElementById("reg-password").value.trim();
-  if(!u||!p)return alert("Isi semua kolom!");
-  const ref=doc(db,"users",u);
-  const s=await getDoc(ref);
-  if(s.exists())return alert("Username sudah terdaftar!");
-  await setDoc(ref,{username:u,password:p,role:"user"});
-  alert("Registrasi berhasil! Silakan login.");
-  registerPage.style.display="none";loginPage.style.display="flex";
-};
+    /* ==== USER ==== */
+    const userTbody = document.getElementById("user-tbody"),
+          searchUser = document.getElementById("search-user");
+    let userGroups = [];
 
-// Login
-document.getElementById("login-btn").onclick=async()=>{
-  const u=document.getElementById("username").value.trim(),
-        p=document.getElementById("password").value.trim();
-  if(!u||!p)return alert("Isi semua kolom!");
-  const ref=doc(db,"users",u);
-  const s=await getDoc(ref);
-  if(!s.exists())return alert("Akun tidak ditemukan!");
-  const user=s.data();
-  if(user.password!==p)return alert("Password salah!");
-  localStorage.setItem("user",JSON.stringify(user));
-  showPanel(user.role);
-};
+    function renderUser(rows) {
+      if (!rows.length) return userTbody.innerHTML = '<tr><td colspan="5">Tidak ada grup.</td></tr>';
+      userTbody.innerHTML = rows.map(r => `
+        <tr class="group-row" 
+            data-id="${r.id}" 
+            data-title="${r.title || '(Tanpa Nama)'}" 
+            data-addedby="${r.addedBy || '-'}" 
+            data-membercount="${r.memberCount || '-'}" 
+            data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}" 
+            data-description="${r.description || 'Tidak ada deskripsi.'}">
+          <td>${r.title || '(Tanpa Nama)'}</td>
+          <td>${r.id}</td>
+          <td>${r.addedBy || '-'}</td>
+          <td>${r.memberCount || '-'}</td>
+          <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
+        </tr>
+      `).join('');
 
-// Logout
-document.getElementById("logout").onclick=document.getElementById("logout2").onclick=()=>{
-  localStorage.removeItem("user");
-  location.reload();
-};
+      document.querySelectorAll(".group-row").forEach(row => {
+        row.onclick = () => showGroupDetail(row.dataset);
+      });
+    }
 
-// Auto login
-const current=JSON.parse(localStorage.getItem("user")||"null");
-if(current)showPanel(current.role);
+    function applyFilterUser() {
+      const t = (searchUser.value || '').toLowerCase();
+      renderUser(userGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
+    }
 
-function showPanel(role){
-  loginPage.style.display=registerPage.style.display="none";
-  if(role==="admin"){adminPanel.style.display="flex";startRealtimeAdmin();}
-  else{userPanel.style.display="flex";startRealtimeUser();}
-}
+    function startRealtimeUser() {
+      const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
+      onSnapshot(q, s => {
+        userGroups = s.docs.map(d => ({ id: d.id, ...d.data() }));
+        applyFilterUser();
+      });
+    }
 
-/* ==== ADMIN ==== */
-const tbody=document.getElementById("tbody"),
-      statText=document.getElementById("stat-text"),
-      search=document.getElementById("search");
-let allGroups=[];
-function renderAdmin(rows){
-  if(!rows.length)return tbody.innerHTML='<tr><td colspan="6">Tidak ada grup.</td></tr>';
-  tbody.innerHTML=rows.map(r=>`
-    <tr>
-      <td>${r.title||'(Tanpa Nama)'}</td>
-      <td>${r.id}</td>
-      <td>${r.addedBy||'-'}</td>
-      <td>${r.memberCount||'-'}</td>
-      <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
-      <td><button class="delete" data-id="${r.id}">Hapus</button></td>
-    </tr>`).join('');
-  document.querySelectorAll(".delete").forEach(b=>{
-    b.onclick=async()=>{if(confirm("Yakin hapus grup ini?"))await deleteDoc(doc(db,"groups",b.dataset.id));};
-  });
-}
-function applyFilterAdmin(){
-  const t=(search.value||'').toLowerCase();
-  renderAdmin(allGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
-}
-function startRealtimeAdmin(){
-  const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
-  onSnapshot(q,s=>{
-    allGroups=s.docs.map(d=>({id:d.id,...d.data()}));
-    applyFilterAdmin();
-    statText.textContent="Tersinkron — "+allGroups.length+" grup";
-  },e=>statText.textContent="Error: "+e.message);
-}
-search.addEventListener("input",applyFilterAdmin);
+    searchUser.addEventListener("input", applyFilterUser);
 
-/* ==== USER ==== */
-const userTbody=document.getElementById("user-tbody"),
-      searchUser=document.getElementById("search-user");
-let userGroups=[];
-function renderUser(rows){
-  if(!rows.length)return userTbody.innerHTML='<tr><td colspan="5">Tidak ada grup.</td></tr>';
-  userTbody.innerHTML=rows.map(r=>`
-    <tr>
-      <td>${r.title||'(Tanpa Nama)'}</td>
-      <td>${r.id}</td>
-      <td>${r.addedBy||'-'}</td>
-      <td>${r.memberCount||'-'}</td>
-      <td>${r.lastChecked?new Date(r.lastChecked).toLocaleString('id-ID'):'-'}</td>
-    </tr>`).join('');
-}
-function applyFilterUser(){
-  const t=(searchUser.value||'').toLowerCase();
-  renderUser(userGroups.filter(g=>(g.title||'').toLowerCase().includes(t)));
-}
-function startRealtimeUser(){
-  const q=query(collection(db,"groups"),orderBy("lastChecked","desc"));
-  onSnapshot(q,s=>{
-    userGroups=s.docs.map(d=>({id:d.id,...d.data()}));
-    applyFilterUser();
-  });
-}
-searchUser.addEventListener("input",applyFilterUser);
-</script>
+    // Fungsi tampilkan modal detail grup
+    function showGroupDetail(data) {
+      document.getElementById("modal-title").textContent = data.title;
+      document.getElementById("modal-id").textContent = data.id;
+      document.getElementById("modal-added-by").textContent = data.addedby;
+      document.getElementById("modal-member-count").textContent = data.membercount;
+      document.getElementById("modal-last-checked").textContent = data.lastchecked;
+      document.getElementById("modal-description").textContent = data.description;
+
+      document.getElementById("group-detail-modal").style.display = "flex";
+    }
+
+    // Tutup modal saat klik X
+    document.querySelector(".close-btn").onclick = () => {
+      document.getElementById("group-detail-modal").style.display = "none";
+    };
+
+    // Tutup modal saat klik luar
+    window.onclick = (e) => {
+      const modal = document.getElementById("group-detail-modal");
+      if (e.target === modal) {
+        modal.style.display = "none";
+      }
+    };
+  </script>
 </body>
 </html>
