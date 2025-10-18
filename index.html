@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Panel Bot - Firebase Login</title>
+  <title>Info Jasher - Angkasa</title>
   <style>
     :root {
       --bg: #0b1220;
@@ -139,6 +139,45 @@
       color: inherit;
       flex: 1;
       min-width: 180px;
+    }
+    
+    header.sticky {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      z-index: 20;
+      background: var(--bg);
+      box-shadow: 0 2px 20px rgba(0,0,0,0.6);
+      padding: 15px 20px; /* tambahkan padding kiri-kanan */
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 8px; /* beri jarak antar elemen */
+    }
+
+    header.sticky .search {
+      width: 100%;
+      max-width: 500px; /* batas biar gak terlalu panjang di layar lebar */
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 10px 15px;
+      font-size: 16px;
+      color: #fff;
+      background: rgba(255,255,255,0.05);
+      transition: all 0.2s ease;
+    }
+
+    header.sticky .search:focus {
+      border-color: #8a63f3;
+      background: rgba(255,255,255,0.1);
+      outline: none;
+    }
+
+    .panel-space {
+      margin-top: 160px; /* bisa kamu ubah sesuai tinggi header */
+      padding: 0 20px;
+      box-sizing: border-box;
     }
 
     .logout-btn {
@@ -288,7 +327,7 @@
     <!-- LOGIN -->
     <div id="login-page" class="center">
       <div class="card">
-        <h2>Login Panel Bot</h2>
+        <h2>Login Info Jasher</h2>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="login-btn">Login</button>
@@ -309,10 +348,10 @@
 
     <!-- ADMIN PANEL -->
     <div id="admin-panel" style="display:none;flex:1;">
-      <div class="wrap">
-        <header>
-          <h1>Panel Admin Bot</h1>
-          <div class="small">Kelola data grup di Firestore</div>
+      <div class="wrap panel-space">
+        <header class="sticky">
+          <h1>Admin Bot Jasher</h1>
+          <div class="small">Kelola data grup di Database</div>
           <input id="search" class="search" placeholder="Cari grup...">
           <button id="logout" class="logout-btn" title="Keluar">🔙</button>
         </header>
@@ -337,10 +376,10 @@
 
     <!-- USER PANEL -->
     <div id="user-panel" style="display:none;flex:1;">
-      <div class="wrap">
-        <header>
+      <div class="wrap panel-space">
+        <header class="sticky">
           <h1>Daftar Grup</h1>
-          <div class="small">Lihat detail grup yang tersedia</div>
+          <div class="small">Live Detail Group Jasher Angkasa</div>
           <input id="search-user" class="search" placeholder="Cari grup...">
           <button id="logout2" class="logout-btn" title="Keluar">🔙</button>
         </header>
@@ -378,7 +417,7 @@
     </div>
   </main>
 
-  <footer>© 2025 Panel Firestore — Semua hak dilindungi</footer>
+  <footer>© 2025 Info Jasher Angkasa — Semua Hak Dilindungi</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
