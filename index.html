@@ -420,7 +420,8 @@
     <!-- LOGIN -->
     <div id="login-page" class="center">
       <div class="card">
-        <h2>Login Info Jasher</h2>
+        <h2>Login</h2>
+        <h2>Info Jasher Angkasa</h2>
         <input type="text" id="username" placeholder="Username">
         <input type="password" id="password" placeholder="Password">
         <button id="login-btn">Login</button>
@@ -782,53 +783,63 @@ async function loadLeaderboard() {
     const groupSnap = await getDocs(collection(db, "groups"));
     const stats = {};
 
+    // 🔹 Kumpulkan data grup
     groupSnap.forEach(doc => {
       const data = doc.data();
-      if (!data.addedBy) return;
-      const name = data.addedByName || data.addedBy;
+      if (!data.addedBy) return; // pastikan ada ID pengundang
 
-      if (!stats[name]) stats[name] = { groups: 0, members: 0 };
-      stats[name].groups += 1;
-      stats[name].members += data.memberCount || 0;
+      const userId = data.addedBy; // ID Telegram
+      const userName = data.addedByName || userId; // Nama pengundang
+
+      if (!stats[userId]) stats[userId] = { name: userName, groups: 0, members: 0 };
+      stats[userId].groups += 1;
+      stats[userId].members += data.memberCount || 0;
     });
 
+    // 🔹 Ambil data premium dari Firestore (berdasarkan ID)
     const premSnap = await getDocs(collection(db, "premiumUsers"));
     const premiumList = premSnap.docs.map(d => d.id);
 
+    // 🔹 Ubah ke format leaderboard
     const sorted = Object.entries(stats)
-      .map(([name, { groups, members }]) => ({
+      .map(([id, { name, groups, members }]) => ({
+        id,
         name,
         groups,
         members,
-        status: premiumList.includes(name) ? "Premium" : "Free"
+        status: premiumList.includes(id) ? "Premium" : "Free"
       }))
       .sort((a, b) => b.members - a.members || b.groups - a.groups);
 
+    // 🔹 Tampilkan hasilnya
     if (!sorted.length) {
       leaderboardList.innerHTML = "<p style='text-align:center;color:#94a3b8;'>Tidak ada data leaderboard.</p>";
       return;
     }
 
     leaderboardList.innerHTML = sorted.slice(0, 10).map((u, i) => {
-  const rankColor =
-    i === 0 ? "#facc15" : i === 1 ? "#a1a1aa" : i === 2 ? "#d97706" : "#94a3b8";
+      const rankColor =
+        i === 0 ? "#facc15" :
+        i === 1 ? "#a1a1aa" :
+        i === 2 ? "#d97706" :
+        "#94a3b8";
 
-  return `
-    <div class="leader-card" style="animation-delay:${i * 0.15}s;">
-      <div class="leader-rank" style="color:${rankColor};">#${i + 1}</div>
-      <div class="leader-name">${u.name}</div>
-      <div class="leader-status">Status: 
-        <span style="color:${u.status === "Premium" ? "#facc15" : "#9ca3af"};">
-          ${u.status}
-        </span>
-      </div>
-      <div class="leader-stats">
-        <div>📋 Jumlah Grup: <strong>${u.groups}</strong></div>
-        <div>👥 Total Member: <strong style="color:#22d3ee;">${u.members}</strong></div>
-      </div>
-    </div>
-  `;
-}).join("");
+      return `
+        <div class="leader-card" style="animation-delay:${i * 0.15}s;">
+          <div class="leader-rank" style="color:${rankColor};">#${i + 1}</div>
+          <div class="leader-name">${u.name}</div>
+          <div class="leader-status">Status: 
+            <span style="color:${u.status === "Premium" ? "#facc15" : "#9ca3af"};">
+              ${u.status}
+            </span>
+          </div>
+          <div class="leader-stats">
+            <div>📋 Jumlah Grup: <strong>${u.groups}</strong></div>
+            <div>👥 Total Member: <strong style="color:#22d3ee;">${u.members}</strong></div>
+          </div>
+        </div>
+      `;
+    }).join("");
 
   } catch (err) {
     console.error("Gagal memuat leaderboard:", err);
